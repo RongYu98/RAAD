@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="panel">
+    <div id="panel-menu">
+        <ul>
+            <li class='menu-outer'>
+                <button id='iptables' class='menu-inner'><img src="../../../static/images/iptables.png">IP tables</button>                    
+            </li>
+            <li class='menu-outer'>
+                <button id='thresholdChg' class='menu-inner'><img src="../../../static/images/threshold.png">Threshold Change</button>                    
+            </li>
+            <li class='menu-outer'>
+                <button id='pswdChg' class='menu-inner'><img src="../../../static/images/password.png">Password Change</button>
+            </li>
+            <li class='menu-outer'>
+                <button onclick="location.href='/logout'" type="button" class='menu-inner'><img src="../../../static/images/logout.png">Logout</button>
+            </li>
+        </ul>
+    </div>
+    <div id="panel-content-outer">
+        <div id="panel-content-inner">
+
+        </div>
+    </div>
+</div>
+{% endblock %}

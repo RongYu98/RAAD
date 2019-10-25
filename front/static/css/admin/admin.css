@@ -1,0 +1,35 @@
+#panel{
+    height: 85%;
+    width: 100%;
+    background-color: white;
+    margin: 0px auto;
+}
+#panel-menu{
+    position: fixed;
+    float: left;    
+    background-color: #edf0ee;
+    height: inherit;
+}
+ul{
+    padding-left: 0px;
+}
+.menu-outer{
+    padding: 25px;
+    font-size: 20px;
+    text-align: left;
+    cursor: pointer;
+}
+.menu-inner{
+    background-color: Transparent;
+}
+.menu-inner img{
+    margin-right: 20px;
+}
+.menu-outer:hover{
+    background-color: #c4c4c4;
+}
+#panel-content-outer{
+    float: right;
+    background-color: aliceblue;
+}
+
