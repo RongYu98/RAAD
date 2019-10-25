@@ -4,9 +4,9 @@
 }
 @media only screen and (min-height: 800px) {
 	.wrapper {
-	  height: 80%;
+		height: 85%;
 	}
-  }
+}
 .logo{
 	height:400px;
 }
