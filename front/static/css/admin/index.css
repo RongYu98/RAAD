@@ -1,16 +1,11 @@
 .wrapper{
 	text-align:center;
-	background-color:#edf0ee;
-}
-@media only screen and (min-height: 800px) {
-	.wrapper {
-		height: 85%;
-	}
+	background-color:transparent;
+	height: 90vh;
 }
 .logo{
 	height:400px;
 }
-
 
 /* .close:hover{
 	color:#3caea3;
@@ -39,12 +34,11 @@
 
 #sign-in{
 	background-color:#ed553b;
+	margin-bottom: 20px;
 }
-
 #sign-in:hover{
 	box-shadow: 0 0 0 10px rgba(0,0,0,0.2);
 }
-
 .bkg-animated {
 	background: gray url("../../images/geometry.png") repeat 0 0;
 	width: 100%;
@@ -54,7 +48,6 @@
 	-webkit-animation: bgSlide 20s linear infinite;
 	animation: bgSlide 20s linear infinite;
 }
-
 @-webkit-keyframes bgSlide {
     from { background-position: 0 0; }
     to { background-position: -400px 0; }
@@ -70,9 +63,9 @@
 	top: 20%;
 	right: -20%;
 	-webkit-animation: notiSlide 0.5s forwards;
-    animation: notiSlide 0.5s forwards;
+	animation: notiSlide 0.5s forwards;
+	box-shadow: 0 8px 6px -6px #a94442
 }
-
 @-webkit-keyframes notiSlide {
     100% { right: 0; }
 }

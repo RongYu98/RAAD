@@ -9,9 +9,9 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="{% static 'css/base.css' %}">
-        <link rel="stylesheet" href="{% static 'css/admin/admin.css' %}">
-        <link rel="stylesheet" href="{% static 'css/admin/index.css'%}">
         <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+        {% block head %}
+        {% endblock %}        
     </head>
     <body>
         <header>
@@ -23,9 +23,9 @@
         </header>
         {% block content %}
         {% endblock %}
-        <footer>
-            <p>Powered by Raad</p>
-        </footer>
     </body>
+    <!-- <footer>
+        <p>Powered by Raad</p>
+    </footer> -->
 </html>
 

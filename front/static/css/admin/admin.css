@@ -4,32 +4,111 @@
     background-color: white;
     margin: 0px auto;
 }
+/* menu */
 #panel-menu{
-    position: fixed;
     float: left;    
-    background-color: #edf0ee;
-    height: inherit;
+    background: linear-gradient(to right, rgba(253, 116, 108, 0.8), rgba(255, 144, 104, 0.8));
+    width: 20%;
+    height: 93vh;
 }
 ul{
     padding-left: 0px;
 }
 .menu-outer{
-    padding: 25px;
-    font-size: 20px;
+    padding: 20px;
+    font-size: 15px;
+    font-weight: bold;
     text-align: left;
-    cursor: pointer;
 }
 .menu-inner{
     background-color: Transparent;
+    outline:0;
 }
 .menu-inner img{
     margin-right: 20px;
 }
-.menu-outer:hover{
-    background-color: #c4c4c4;
+.menu-outer:not(.active):hover{
+    background-color: rgba(255,255,255,0.6);
 }
-#panel-content-outer{
+.active{
+    background-color: white;
+}
+@media only screen and (max-width: 1250px) {
+	.menu-outer > * {
+        width: 50%;
+        padding-left: 25%;
+    }
+    .menu-outer img{
+        margin: 0px;
+    }
+}
+/* content */
+#panel-content{
     float: right;
-    background-color: aliceblue;
+    width: 80%;
 }
-
+.section{
+    border: rgba(128,128,128,0.3) 2px solid;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 8px 6px -6px black;
+    margin: 5rem;   
+}
+.section-title{
+    border-bottom: rgb(163, 163, 163) 2px solid;
+    font-size: 20px;
+    font-weight: bold;
+}
+/* blacklist */
+#warning-msg{
+    color: red;
+    display: none;
+    margin-top: 0.5rem;
+}
+#blacklist-ip-content{
+    margin-top: 2rem;
+    display: inline-block;
+}
+#blacklist-ip-content > input{
+    float: left;
+    width: 200px;
+    margin: 0px 10px 0px 0px;
+}
+#blacklist-ip-content > button{
+    float: right;
+}
+#blacklist-table-wrapper{
+    position:relative;
+}
+#blacklist-table-scroll{
+    height:200px;
+    overflow:auto;  
+    margin-top:20px;
+}
+#blacklist-table-wrapper table {
+    width:100%;
+}
+/* threshold */
+.threshold-inner-section{
+    margin: 2rem 0 2rem 0;
+}
+.threshold-inner-section > input{
+    width: 200px;
+    margin: 0px 10px 0px 0px;
+}
+.threshold-inner-section > div{
+    display: inline-block;
+    height: 34px;
+}
+/* password */
+.password-inner-section{
+    margin: 2rem 0 2rem 0;
+}
+.password-inner-section > input{
+    width: 400px;
+    margin: 0px 10px 0px 0px;
+}
+.password-inner-section > div{
+    display: inline-block;
+    height: 34px;
+}

@@ -1,27 +1,122 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/admin/admin.css' %}">
+<script src="{% static 'js/admin/admin.js' %}"></script>
+<script src="{% static 'js/sha256.js' %}"></script>
+{% endblock %}
 
 {% block content %}
 <div id="panel">
     <div id="panel-menu">
         <ul>
+            {% if content_type == 'blacklist'%}
+            <li class='menu-outer active'>
+            {% else %}
             <li class='menu-outer'>
-                <button id='iptables' class='menu-inner'><img src="../../../static/images/iptables.png">IP Tables</button>                    
+            {% endif %}
+                <img src="../../../static/images/blacklist.png">    
+                <button onclick="location.href='/admin/blacklist/'" id='blacklist' class='menu-inner'>Blacklist</button>                    
+            </li>
+            {% if content_type == 'threshold'%}
+            <li class='menu-outer active'>
+            {% else %}
+            <li class='menu-outer'>
+            {% endif %}
+                <img src="../../../static/images/threshold.png">
+                <button onclick="location.href='/admin/threshold/'" id='threshold' class='menu-inner'>Threshold</button>                    
+            </li>
+            {% if content_type == 'password'%}
+            <li class='menu-outer active'>
+            {% else %}
+            <li class='menu-outer'>
+            {% endif %}
+                <img src="../../../static/images/password.png">
+                <button onclick="location.href='/admin/password/'" id='password' class='menu-inner'>Password</button>
             </li>
             <li class='menu-outer'>
-                <button id='thresholdChg' class='menu-inner'><img src="../../../static/images/threshold.png">Threshold Change</button>                    
-            </li>
-            <li class='menu-outer'>
-                <button id='pswdChg' class='menu-inner'><img src="../../../static/images/password.png">Password Change</button>
-            </li>
-            <li class='menu-outer'>
-                <button onclick="location.href='/logout'" type="button" class='menu-inner'><img src="../../../static/images/logout.png">Logout</button>
+                <img src="../../../static/images/logout.png">
+                <button onclick="location.href='/signout'" class='menu-inner'>Sign out</button>
             </li>
         </ul>
     </div>
-    <div id="panel-content-outer">
-        <div id="panel-content-inner">
-
+    <div id="panel-content">
+        {% if content_type == 'blacklist'%}
+        <div id='blacklist-content' class="content">
+            <div id="blacklist-ip" class="section">
+                <div id="blacklist-ip-title" class="section-title">
+                    <span>Add Blacklist IP Address</span>
+                </div>
+                <div id="warning-msg">wrong input format</div>
+                <div id="blacklist-ip-content" class="section-content">
+                    <input class="form-control" type="text" placeholder="0.0.0.0" required>
+                    <button type="button" class="btn btn-primary">Add</button>
+                </div>                
+            </div>     
+            <div id="blacklist-table" class="section">
+                <div id="blacklist-table-title" class="section-title">
+                    <span>Blacklist IP Tables</span>
+                </div> 
+                <div id="blacklist-table-wrapper">
+                    <div id="blacklist-table-scroll">
+                        <table id='blacklist-table-content' class="table section-content">
+                            <tbody>
+                                {% for blacklist in blacklists %}
+                                <tr>
+                                <td>{{ blacklist.ip }}</td>
+                                <td><button id="{{ blacklist.ip }}" type="button" class="btn btn-danger">Remove</button></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
+        {% elif content_type == 'threshold' %}
+            <div id='threshold-content' class="content">
+                <div id="threshold-inner" class="section">
+                    <div id="threshold-inner-title" class="section-title">
+                        <span>Threshold Configuration</span>
+                    </div>
+                    <div id="threshold-inner-content" class="section-content">	
+                        <div class="threshold-inner-section">
+                            <div>Max Retry: </div>
+                            <input class="form-control" id="maxretry" type="text" value="{{maxretry}}" required>
+                        </div>
+                        <div class="threshold-inner-section">
+                            <div>Find Time(minute): </div>
+                            <input class="form-control" id="findtime" type="text" value="{{findtime}}" required>
+                        </div>
+                        <div class="threshold-inner-section">
+                            <div>Ban Time(second): </div>
+                            <input class="form-control" id="bantime"  type="text" value="{{bantime}}" required>
+                        </div>
+                        <button type="button" class="btn btn-primary">Submit</button>
+                    </div>                
+                </div>     
+            </div>
+        {% elif content_type == 'password' %}
+            <div id='password-content' class="content">
+                <div id="password-inner" class="section">
+                    <div id="password-inner-title" class="section-title">
+                        <span>Password Change</span>
+                    </div>
+                    <div id="password-inner-content">	
+                        <div class="password-inner-section">
+                            <div>New Password: </div>
+                            <input class="form-control" id='password' type="password" required>
+                        </div>
+                        <div class="password-inner-section">
+                            <div>Confirm New Password: </div>
+                            <input class="form-control" id='confirmed_password' type="password" required>
+                        </div>
+                        <button type="button" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>     
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

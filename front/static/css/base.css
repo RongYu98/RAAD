@@ -1,18 +1,17 @@
 * {
 	box-sizing: border-box;
+	font-family: monospace;
 }
 html, body {
 	width: -webkit-fill-available; 
 	height: 100%;
 	overflow-x: hidden!important;
-	background-color:#edf0ee;
-	font-family: "Raleway", sans-serif;
 	margin: 0;
 } 
 header{
-	background-color:#edf0ee;
+	background: linear-gradient(to right, rgb(253, 116, 108), rgb(255, 144, 104));
 	border-bottom-style: solid;
-	border-bottom-color: #a6aba7;
+	border-bottom-color: transparent;
 	border-bottom-width: 1px;
 }
 footer{
@@ -29,6 +28,8 @@ input{
 	border-radius:20px;
 	padding:5px;
 	font-weight:bold;
+}
+input, button, a{
 	outline:0;
 }
 input[type=submit], button, .close{

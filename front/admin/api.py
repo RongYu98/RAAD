@@ -3,32 +3,50 @@ from django.http import HttpResponse
 from .models import Account
 import hashlib
 
-def login(request):
+def signin(request):
     if request.method == 'POST':
         body = str(request.body, 'utf-8').split('&')
         username, password = None, None
         
         for param in body:
             if 'username=' in param:
-                username = param[9:]
+                username = param[9:].strip()
             elif 'password=' in param:
-                password = param[9:]
+                password = param[9:].strip()
                 password = hashlib.sha256(password.encode()).hexdigest()
         
         try:
             if Account.objects.get(username=username, password=password):
-                request.session['alive'] = True
-                return redirect('/admin/')
+                request.session['active'] = True
+                return redirect('/admin/blacklist/')
         except Account.DoesNotExist:
-            request.session['alive'] = False
+            request.session['active'] = False
             return redirect('/')
     
-    return render(request, 'error.html', {})
+    return redirect('/error/')
 
-def logout(request):
+def signout(request):
     if request.method == 'GET':
-        if request.session['alive']:
-            del request.session['alive']
+        if request.session['active']:
+            del request.session['active']
             return redirect('/')
     
-    return render(request, 'error.html', {})
+    return redirect('/error/')
+
+def password(request):
+    if request.method == 'PUT':
+        if request.session['active']:
+            body = str(request.body, 'utf-8').split('&')
+            password, confirmed_password = None, None
+            
+            for param in body:
+                if 'password=' in param:
+                    password = param[9:].strip()
+                elif 'confirmed_password=' in param:
+                    confirmed_password = param[19:].strip()
+            
+            if password and confirmed_password and password == confirmed_password:
+                # api request
+                return redirect('/admin/password')
+
+    return redirect('/error/')

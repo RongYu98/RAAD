@@ -25,7 +25,7 @@ SECRET_KEY = 'u05z72)jpl*#$_nc0o2dn!h2pad#mle1k$m$(frmztt$u2_^v0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -132,3 +132,6 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
+
+# Others
+SESSION_EXPIRE_AT_BROWSER_CLOSE=True
