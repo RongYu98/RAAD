@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import requests
 
-# Create your views here.
 def home(request):
     if request.session.has_key('active'): # session is alive
         if request.session['active'] == False: # failed to login
@@ -12,7 +11,7 @@ def home(request):
             return render(request, 'admin/index.html', context={'active': None})
     else: #just opened website
         return render(request, 'admin/index.html', context={'active': None})
-        
+
 def blacklist(request):
     if request.session.has_key('active'): # session is alive
         if request.session['active']: # logged in with admin account
@@ -37,7 +36,7 @@ def threshold(request):
             return redirect('/')
     else: # session is dead
         return redirect('/')
-
+        
 def password(request):
     if request.session.has_key('active'): # session is alive
         if request.session['active']: # logged in with admin account

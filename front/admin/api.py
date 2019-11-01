@@ -5,16 +5,10 @@ import hashlib
 
 def signin(request):
     if request.method == 'POST':
-        body = str(request.body, 'utf-8').split('&')
-        username, password = None, None
-        
-        for param in body:
-            if 'username=' in param:
-                username = param[9:].strip()
-            elif 'password=' in param:
-                password = param[9:].strip()
-                password = hashlib.sha256(password.encode()).hexdigest()
-        
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        password = hashlib.sha256(password.encode()).hexdigest()
+                   
         try:
             if Account.objects.get(username=username, password=password):
                 request.session['active'] = True
@@ -28,7 +22,7 @@ def signin(request):
 def signout(request):
     if request.method == 'GET':
         if request.session['active']:
-            del request.session['active']
+            request.session.flush()
             return redirect('/')
     
     return redirect('/error/')
