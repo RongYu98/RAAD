@@ -95,6 +95,6 @@ def get_blacklisted_ips():
     return jsonify(status=200, result='success', detail=ips)
         
 if __name__ == "__main__":
-    login_records.ban.insert({'ip':'1.1.1.1', 'time':TIME.time()})
+    login_records.ban.insert({'ip':'1.1.1.1', 'time':TIME.time(), 'duration':ban_time})
     app.run(host='0.0.0.0', port=9000)
     
