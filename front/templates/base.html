@@ -21,7 +21,7 @@
             <img class='name_logo' src="{% static 'images/name.png'%}"></img>	
             <div id='alert' class="alert alert-danger fade in" style="display:none;">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <strong>Unsuccessful Login</strong>
+                <strong>{{alert_msg}}</strong>
             </div>
         </header>
         {% block content %}

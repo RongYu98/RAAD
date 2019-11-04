@@ -5,7 +5,7 @@ import requests
 def home(request):
     if request.session.has_key('active'): # session is alive
         if request.session['active'] == False: # failed to login
-            return render(request, 'admin/index.html', context={'active': False})
+            return render(request, 'admin/index.html', context={'active': False, 'alert_msg': 'Unsuccessful Login'})
         else: # previously logged in, but revisited
             del request.session['active']
             return render(request, 'admin/index.html', context={'active': None})
@@ -15,8 +15,10 @@ def home(request):
 def blacklist(request):
     if request.session.has_key('active'): # session is alive
         if request.session['active']: # logged in with admin account
-            # blacklists = requests.get('')
-            blacklists = [{'ip':'1.1.1.1'}]
+            blacklists = []
+            res = requests.get('http://localhost:8000/blacklisted_ips')
+            if res and res['status'] == 200:
+                blacklists = res['detail']
             return render(request, 'admin/admin.html', {'content_type':'blacklist', 'blacklists':blacklists})
         else: #logged in with different account
             del request.session['active']
@@ -27,10 +29,12 @@ def blacklist(request):
 def threshold(request):
     if request.session.has_key('active'): # session is alive
         if request.session['active']: # logged in with admin account
-            maxretry = 2
-            findtime = 2
-            bantime = 2
-            return render(request, 'admin/admin.html', {'content_type':'threshold', 'maxretry': maxretry, 'findtime': findtime, 'bantime': bantime})
+            res = requests.get('http://127.0.0.1:9000/get_threshold')
+            if res and res['status'] == 200:
+                maxretry,tolerancetime, bantime = res['detail']['maxretry'], res['detail']['tolerancetime'], res['detail']['bantime']
+            else:
+                maxretry, tolerancetime, bantime = 3, 1, 3600 # default
+            return render(request, 'admin/admin.html', {'content_type':'threshold', 'maxretry': maxretry, 'tolerancetime': tolerancetime, 'bantime': bantime})
         else: #logged in with different account
             del request.session['active']
             return redirect('/')

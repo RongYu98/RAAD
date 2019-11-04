@@ -39,3 +39,19 @@ input[type=submit], button, .close{
 ul {
 	list-style-type: none;
 }
+.alert{
+	z-index: 1;
+	width: 20%;
+	position: absolute;
+	top: 20%;
+	right: -20%;
+	-webkit-animation: notiSlide 0.5s forwards;
+	animation: notiSlide 0.5s forwards;
+	box-shadow: 0 8px 6px -6px #a94442
+}
+@-webkit-keyframes notiSlide {
+    100% { right: 0; }
+}
+@keyframes notiSlide {
+    100% { right: 0; }
+}
