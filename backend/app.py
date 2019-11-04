@@ -1,8 +1,9 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 
 from datetime import datetime
 import pymongo
-import time
+import time as TIME
+import utils
 
 app = Flask(__name__)
 
@@ -34,15 +35,18 @@ def record_failed_login():
         return jsonify(status="BANNED")
     else:
         return jsonify(status="Let's wait")
-    
+
 def blacklistIP(ip_address):
+    utils.ban(ip_address)
     login_records.ban.insert(
-            {'ip':ip_address, 'start_time':time.time(), 'duration':ban_time})
-    # ACTUALLY BAN IP
+            {'ip':ip_address, 'start_time':TIME.time(), 'duration':ban_time})
+    
     # SCHEDULE EVENT TO WHITELIST
     # THEN SAVE THE BANNING INTO A DICTIONARY, TO CANCEL IF THEY CHANGE THE TIME
     return None
 def whitelistIP(ip_address):
+    # CHECK TO SEE IF IT"S BEEN SCHEDULED, remove if it has?
+    utils.unban(ip_address)
     login_records.ban.delete_many({'ip':ip_address})
     return None
     
@@ -93,8 +97,26 @@ def get_blacklisted_ips():
     for doc in cursor:
         ips.append({'ip':doc['ip']})
     return jsonify(status=200, result='success', detail=ips)
-        
+
+@app.route('/remove_blacklisted_ip', methods=['DELETE'])
+def remove_blacklisted_ip():
+    info = request.values
+    if ('ip' not in info):
+        return jsonify(status=500, result='failed', details='IP Address not specified')
+    whitelistIP(info['ip'])
+    return jsonify(status=200, result='success')
+
+@app.route('/blacklist_ip', methods=['POST'])
+def blacklist_blacklisted_ip():
+    info = request.form
+    if ("ip" not in info):
+        return jsonify(status=500, result='failed', details='IP Address not specified')
+    blacklistIP(info["ip"])
+    return jsonify(status=200, result='success')
+
+
 if __name__ == "__main__":
-    login_records.ban.insert({'ip':'1.1.1.1', 'time':TIME.time(), 'duration':ban_time})
-    app.run(host='0.0.0.0', port=9000)
+    # login_records.ban.insert({'ip':'1.1.1.1', 'time':TIME.time(), 'duration':ban_time})
+    blacklistIP('2.2.2.2')
+    app.run(host='0.0.0.0', port=9000, debug=True)
     
