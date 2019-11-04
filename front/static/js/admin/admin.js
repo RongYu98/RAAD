@@ -77,10 +77,10 @@ $(document).ready(function () {
     // MOD threshold
     $('#threshold-inner-content button').click(function(){
         var maxretry = $('#maxretry').val();
-        var tolerancetime = $('#tolerancetime').val();
+        var findtime = $('#findtime').val();
         var bantime = $('#bantime').val();
         // check if the values are integer
-        if(maxretry.match(/[0-9 -()+]+$/) && tolerancetime.match(/[0-9 -()+]+$/) && bantime.match(/[0-9 -()+]+$/)){
+        if(maxretry.match(/[0-9 -()+]+$/) && findtime.match(/[0-9 -()+]+$/) && bantime.match(/[0-9 -()+]+$/)){
             // ajax call
             var api_url = 'http://127.0.0.1:9000/set_threshold'
             $.ajax({
@@ -91,11 +91,11 @@ $(document).ready(function () {
                 contentType: "application/json",
                 dataType: 'json',
                 type: 'PUT',
-                data: {maxretry: maxretry, tolerancetime: tolerancetime, bantime: bantime},
+                data: {maxretry: maxretry, findtime: findtime, bantime: bantime},
                 success: function(result){
                     if(result.status == 200){
                         $('#maxretry').val(maxretry);
-                        $('#tolerancetime').val(tolerancetime);
+                        $('#findtime').val(findtime);
                         $('#bantime').val(bantime);
                         $('#alert').hide();
                     }
@@ -116,10 +116,10 @@ $(document).ready(function () {
                 $('#maxretry').css('border-color', 'red');
                 $('#maxretry').css('border-width', '2px');
             } 
-            if(!tolerancetime.match(/[0-9 -()+]+$/)){
+            if(!findtime.match(/[0-9 -()+]+$/)){
                 // warning
-                $('#tolerancetime').css('border-color', 'red');
-                $('#tolerancetime').css('border-width', '2px');
+                $('#findtime').css('border-color', 'red');
+                $('#findtime').css('border-width', '2px');
             } 
             if(!bantime.match(/[0-9 -()+]+$/)){
                 // warning

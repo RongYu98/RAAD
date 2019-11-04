@@ -31,10 +31,10 @@ def threshold(request):
         if request.session['active']: # logged in with admin account
             res = requests.get('http://127.0.0.1:9000/get_threshold')
             if res and res['status'] == 200:
-                maxretry,tolerancetime, bantime = res['detail']['maxretry'], res['detail']['tolerancetime'], res['detail']['bantime']
+                maxretry,findtime, bantime = res['detail']['maxretry'], res['detail']['findtime'], res['detail']['bantime']
             else:
-                maxretry, tolerancetime, bantime = 3, 1, 3600 # default
-            return render(request, 'admin/admin.html', {'content_type':'threshold', 'maxretry': maxretry, 'tolerancetime': tolerancetime, 'bantime': bantime})
+                maxretry, findtime, bantime = 3, 1, 3600 # default
+            return render(request, 'admin/admin.html', {'content_type':'threshold', 'maxretry': maxretry, 'findtime': findtime, 'bantime': bantime})
         else: #logged in with different account
             del request.session['active']
             return redirect('/')
