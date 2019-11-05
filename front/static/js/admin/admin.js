@@ -2,10 +2,11 @@ $(document).ready(function () {
     // ADD IP
     $("#blacklist-ip-content button").click(function(){
         var ip_addr = $('#blacklist-ip-content input').val().trim();
+	
         // check if the value is ip address format
         if(ip_addr.match(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)){
             // ajax call
-            var api_url = 'http://127.0.0.1:9000/blacklist_ip'
+            var api_url = '/add_ip/'
             $.ajax({
                 url: api_url,
                 headers: {
@@ -15,18 +16,20 @@ $(document).ready(function () {
                 dataType: 'json',
                 type: 'POST',
                 data: {ip: ip_addr},
+
                 success: function(result){
                     if(result.status == 200){
                         $('#blacklist-ip-content input').val("");
                         $('#alert').hide();
+			window.location.href = "/admin/blacklist";
                     }
                     else{
-                        $('#alert > strong').text('Unsuccessful Submit');
+                        $('#alert > strong').text('Server Error!');
                         $('#alert').show();
                     }
                 },
                 error: function(xhr, textStatus, errorThrown){
-                    $('#alert > strong').text('Unsuccessful Submit');
+                    $('#alert > strong').text('Internal Error!');
                     $('#alert').show();
                 }
             });
@@ -43,37 +46,8 @@ $(document).ready(function () {
             $('#blacklist-ip-content').css('margin-top', '0');
             $('#warning-msg').show();
         }
-    });  
-    // DELETE IP
-    $('#blacklist-table-content button').click(function(){
-        var ip_addr = $(this).attr('id');
-        // ajax call
-        var api_url = 'http://127.0.0.1:9000/remove_blacklisted_ip'
-        $.ajax({
-            url: api_url,
-            headers: {
-                'Access-Control-Allow-Origin':'*',
-            },
-            contentType: "application/json",
-            dataType: 'json',
-            type: 'DELETE',
-            data: {ip: ip_addr},
-            success: function(result){
-                if(result.status == 200){
-                    $(this).hide();
-                    $('#alert').hide();
-                }
-                else{
-                    $('#alert > strong').text('Unsuccessful Removal');
-                    $('#alert').show();
-                }
-            },
-            error: function(xhr, textStatus, errorThrown){
-                $('#alert > strong').text('Unsuccessful Removal');
-                $('#alert').show();
-            }
-        });
-    })
+    }); 
+
     // MOD threshold
     $('#threshold-inner-content button').click(function(){
         var maxretry = $('#maxretry').val();
@@ -100,12 +74,12 @@ $(document).ready(function () {
                         $('#alert').hide();
                     }
                     else{
-                        $('#alert > strong').text('Unsuccessful Submit');
+                        $('#alert > strong').text('Server Error!');
                         $('#alert').show();
                     }
                 },
                 error: function(xhr, textStatus, errorThrown){
-                    $('#alert > strong').text('Unsuccessful Submit');
+                    $('#alert > strong').text('Internal Error!');
                     $('#alert').show();
                 }
             });
