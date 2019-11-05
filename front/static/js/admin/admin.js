@@ -46,7 +46,7 @@ $(document).ready(function () {
     });  
     // DELETE IP
     $('#blacklist-table-content button').click(function(){
-        var ip = $(this).attr('id');
+        var ip_addr = $(this).attr('id');
         // ajax call
         var api_url = 'http://127.0.0.1:9000/remove_blacklisted_ip'
         $.ajax({
