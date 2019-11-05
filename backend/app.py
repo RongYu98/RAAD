@@ -1,4 +1,5 @@
 from flask import Flask, render_template, jsonify, request
+from flask_cors import CORS
 
 from datetime import datetime
 import pymongo
@@ -6,6 +7,7 @@ import time as TIME
 import utils
 
 app = Flask(__name__)
+CORS(app)
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 login_records = client["login_records"]
