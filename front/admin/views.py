@@ -16,7 +16,7 @@ def blacklist(request):
     if request.session.has_key('active'): # session is alive
         if request.session['active']: # logged in with admin account
             blacklists = []
-            res = requests.get('http://localhost:8000/blacklisted_ips')
+            res = requests.get('http://127.0.0.1:9000/blacklisted_ips')
             if res and res['status'] == 200:
                 blacklists = res['detail']
             return render(request, 'admin/admin.html', {'content_type':'blacklist', 'blacklists':blacklists})
