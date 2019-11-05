@@ -15,11 +15,13 @@ def home(request):
 def blacklist(request):
     if request.session.has_key('active'): # session is alive
         if request.session['active']: # logged in with admin account
-            blacklists = []
-            res = requests.get('http://127.0.0.1:9000/blacklisted_ips')
-            if res and res['status'] == 200:
-                blacklists = res['detail']
-            return render(request, 'admin/admin.html', {'content_type':'blacklist', 'blacklists':blacklists})
+            try:
+                res = requests.get('http://127.0.0.1:9000/blacklisted_ips').json()
+                if res and res['status'] == 200:
+                    blacklists = res['detail']
+                return render(request, 'admin/admin.html', {'content_type':'blacklist', 'blacklists':blacklists})
+            except Exception:
+                return render(request, 'admin/admin.html', {'content_type':'blacklist', 'blacklists':[]]})
         else: #logged in with different account
             del request.session['active']
             return redirect('/')
@@ -29,12 +31,16 @@ def blacklist(request):
 def threshold(request):
     if request.session.has_key('active'): # session is alive
         if request.session['active']: # logged in with admin account
-            res = requests.get('http://127.0.0.1:9000/get_threshold')
-            if res and res['status'] == 200:
-                maxretry,findtime, bantime = res['detail']['maxretry'], res['detail']['findtime'], res['detail']['bantime']
-            else:
-                maxretry, findtime, bantime = 3, 1, 3600 # default
-            return render(request, 'admin/admin.html', {'content_type':'threshold', 'maxretry': maxretry, 'findtime': findtime, 'bantime': bantime})
+            try:
+                res = requests.get('http://127.0.0.1:9000/get_threshold').json()
+                if res and res['status'] == 200:
+                    maxretry,findtime, bantime = res['detail']['maxretry'], res['detail']['findtime'], res['detail']['bantime']
+                else:
+                    maxretry, findtime, bantime = 3, 1, 3600 # default
+            except Exception:
+                maxretry, findtime, bantime = 0, 0, 0
+            finally:
+                return render(request, 'admin/admin.html', {'content_type':'threshold', 'maxretry': maxretry, 'findtime': findtime, 'bantime': bantime})
         else: #logged in with different account
             del request.session['active']
             return redirect('/')
