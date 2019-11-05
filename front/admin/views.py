@@ -21,7 +21,7 @@ def blacklist(request):
                     blacklists = res['detail']
                 return render(request, 'admin/admin.html', {'content_type':'blacklist', 'blacklists':blacklists})
             except Exception:
-                return render(request, 'admin/admin.html', {'content_type':'blacklist', 'blacklists':[]]})
+                return render(request, 'admin/admin.html', {'content_type':'blacklist', 'blacklists':[]})
         else: #logged in with different account
             del request.session['active']
             return redirect('/')
