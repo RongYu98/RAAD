@@ -19,13 +19,14 @@ def signin(request):
     
     return redirect('/error/')
 
+
 def signout(request):
-    if request.method == 'GET':
-        if request.session['active']:
-            request.session.flush()
-            return redirect('/')
+    if request.method == 'GET' and request.session['active']:
+        request.session.flush()
+        return redirect('/')
     
     return redirect('/error/')
+
 
 def blacklist_ip(request):
     if request.method == 'POST' and request.session['active']:
@@ -33,12 +34,12 @@ def blacklist_ip(request):
         res = requests.post('http://127.0.0.1:9000/blacklist_ip', data=data).json()
         return JsonResponse(res)
 
+
 def remove_blacklisted_ip(request, ip):
-    if request.method == 'GET':
-        if request.session['active']:
-            res = requests.delete('http://127.0.0.1:9000/remove_blacklisted_ip', data={'ip': ip}).json()
-            if res and res['status'] == 200:
-                return redirect('/admin/blacklist/')
+    if request.method == 'GET' and request.session['active']:
+        res = requests.delete('http://127.0.0.1:9000/remove_blacklisted_ip', data={'ip': ip}).json()
+        if res and res['status'] == 200:
+            return redirect('/admin/blacklist/')
 
     return redirect('/error/')
 

@@ -22,8 +22,8 @@
             <li class='menu-outer active'>
             {% else %}
             <li class='menu-outer'>
-	    {% endif %}
-		<button onclick="location.href='/admin/threshold/'" id='threshold' class='menu-inner'><img src="../../../static/images/threshold.png">Threshold</button>        
+	        {% endif %}
+		        <button onclick="location.href='/admin/threshold/'" id='threshold' class='menu-inner'><img src="../../../static/images/threshold.png">Threshold</button>        
             </li>
             {% if content_type == 'password'%}
             <li class='menu-outer active'>
@@ -61,7 +61,7 @@
                                 {% for blacklist in blacklists %}
                                 <tr>
                                 <td>{{ blacklist.ip }}</td>
-				<td><button onclick="location.href='/remove_blacklisted_ip/{{blacklist.ip}}/'" type="button" class="btn btn-danger">Remove</button></td>
+				                <td><button onclick="location.href='/remove_blacklisted_ip/{{blacklist.ip}}/'" type="button" class="btn btn-danger">Remove</button></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -71,47 +71,47 @@
             </div>
         </div>
         {% elif content_type == 'threshold' %}
-            <div id='threshold-content' class="content">
-                <div id="threshold-inner" class="section">
-                    <div id="threshold-inner-title" class="section-title">
-                        <span>Threshold Configuration</span>
+        <div id='threshold-content' class="content">
+            <div id="threshold-inner" class="section">
+                <div id="threshold-inner-title" class="section-title">
+                    <span>Threshold Configuration</span>
+                </div>
+                <div id="threshold-inner-content" class="section-content">	
+                    <div class="threshold-inner-section">
+                        <div>Max Retry: </div>
+                        <input class="form-control" id="maxretry" type="text" value="{{maxretry}}" required>
                     </div>
-                    <div id="threshold-inner-content" class="section-content">	
-                        <div class="threshold-inner-section">
-                            <div>Max Retry: </div>
-                            <input class="form-control" id="maxretry" type="text" value="{{maxretry}}" required>
-                        </div>
-                        <div class="threshold-inner-section">
-                            <div>Find Time(minute): </div>
-                            <input class="form-control" id="findtime" type="text" value="{{findtime}}" required>
-                        </div>
-                        <div class="threshold-inner-section">
-                            <div>Ban Time(second): </div>
-                            <input class="form-control" id="bantime"  type="text" value="{{bantime}}" required>
-                        </div>
-                        <button type="button" class="btn btn-primary">Submit</button>
-                    </div>                
-                </div>     
-            </div>
+                    <div class="threshold-inner-section">
+                        <div>Find Time(minute): </div>
+                        <input class="form-control" id="findtime" type="text" value="{{findtime}}" required>
+                    </div>
+                    <div class="threshold-inner-section">
+                        <div>Ban Time(second): </div>
+                        <input class="form-control" id="bantime"  type="text" value="{{bantime}}" required>
+                    </div>
+                    <button type="button" class="btn btn-primary">Submit</button>
+                </div>                
+            </div>     
+        </div>
         {% elif content_type == 'password' %}
-            <div id='password-content' class="content">
-                <div id="password-inner" class="section">
-                    <div id="password-inner-title" class="section-title">
-                        <span>Password Change</span>
+        <div id='password-content' class="content">
+            <div id="password-inner" class="section">
+                <div id="password-inner-title" class="section-title">
+                    <span>Password Change</span>
+                </div>
+                <div id="password-inner-content">	
+                    <div class="password-inner-section">
+                        <div>New Password: </div>
+                        <input class="form-control" id='password' type="password" required>
                     </div>
-                    <div id="password-inner-content">	
-                        <div class="password-inner-section">
-                            <div>New Password: </div>
-                            <input class="form-control" id='password' type="password" required>
-                        </div>
-                        <div class="password-inner-section">
-                            <div>Confirm New Password: </div>
-                            <input class="form-control" id='confirmed_password' type="password" required>
-                        </div>
-                        <button type="button" class="btn btn-primary">Submit</button>
+                    <div class="password-inner-section">
+                        <div>Confirm New Password: </div>
+                        <input class="form-control" id='confirmed_password' type="password" required>
                     </div>
-                </div>     
-            </div>
+                    <button type="button" class="btn btn-primary">Submit</button>
+                </div>
+            </div>     
+        </div>
         {% endif %}
     </div>
 </div>
