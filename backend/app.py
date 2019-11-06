@@ -39,12 +39,14 @@ def record_failed_login():
         return jsonify(status="Let's wait")
 
 def blacklistIP(ip_address):
-    utils.ban(ip_address)
-    login_records.ban.insert(
+    if (login_records.ban.find_one({'ip':ip_address})==None):
+        utils.ban(ip_address)
+        login_records.ban.insert(
             {'ip':ip_address, 'start_time':TIME.time(), 'duration':ban_time})
-    
-    # SCHEDULE EVENT TO WHITELIST
-    # THEN SAVE THE BANNING INTO A DICTIONARY, TO CANCEL IF THEY CHANGE THE TIME
+        # SCHEDULE EVENT TO WHITELIST
+        # THEN SAVE THE BANNING INTO A DICTIONARY, TO CANCEL IF THEY CHANGE THE TIME
+
+    # else do nothing? they already banned?
     return None
 def whitelistIP(ip_address):
     # CHECK TO SEE IF IT"S BEEN SCHEDULED, remove if it has?
