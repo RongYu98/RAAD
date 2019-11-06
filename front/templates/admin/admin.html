@@ -16,28 +16,24 @@
             {% else %}
             <li class='menu-outer'>
             {% endif %}
-                <img src="../../../static/images/blacklist.png">    
-                <button onclick="location.href='/admin/blacklist/'" id='blacklist' class='menu-inner'>Blacklist</button>                    
+                <button onclick="location.href='/admin/blacklist/'" id='blacklist' class='menu-inner'><img src="../../../static/images/blacklist.png">Blacklist</button>        
             </li>
             {% if content_type == 'threshold'%}
             <li class='menu-outer active'>
             {% else %}
             <li class='menu-outer'>
-            {% endif %}
-                <img src="../../../static/images/threshold.png">
-                <button onclick="location.href='/admin/threshold/'" id='threshold' class='menu-inner'>Threshold</button>                    
+	    {% endif %}
+		<button onclick="location.href='/admin/threshold/'" id='threshold' class='menu-inner'><img src="../../../static/images/threshold.png">Threshold</button>        
             </li>
             {% if content_type == 'password'%}
             <li class='menu-outer active'>
             {% else %}
             <li class='menu-outer'>
             {% endif %}
-                <img src="../../../static/images/password.png">
-                <button onclick="location.href='/admin/password/'" id='password' class='menu-inner'>Password</button>
+                <button onclick="location.href='/admin/password/'" id='password' class='menu-inner'><img src="../../../static/images/password.png">Password</button>
             </li>
             <li class='menu-outer'>
-                <img src="../../../static/images/logout.png">
-                <button onclick="location.href='/signout'" class='menu-inner'>Sign out</button>
+                <button onclick="location.href='/signout'" class='menu-inner'><img src="../../../static/images/logout.png">Sign out</button>
             </li>
         </ul>
     </div>
@@ -48,12 +44,10 @@
                 <div id="blacklist-ip-title" class="section-title">
                     <span>Add Blacklist IP Address</span>
                 </div>
-                <div id="warning-msg">wrong input format</div>
+                <div id="warning-msg"></div>
                 <div id="blacklist-ip-content" class="section-content">
-			<!--			<form method='POST' action="{% url "add_ip" %}" >-->
-                	    <input class="form-control" name="ip" type="text" placeholder="0.0.0.0" required>
-	                    <button type="submit" class="btn btn-primary">Add</button>
-			    <!--			</form>-->
+               	    <input class="form-control" name="ip" type="text" placeholder="0.0.0.0" required>
+                    <button type="submit" class="btn btn-primary">Add</button>
                 </div>                
             </div>     
             <div id="blacklist-table" class="section">

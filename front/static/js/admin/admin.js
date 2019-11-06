@@ -24,8 +24,16 @@ $(document).ready(function () {
 			window.location.href = "/admin/blacklist";
                     }
                     else{
-                        $('#alert > strong').text('Server Error!');
-                        $('#alert').show();
+			if(result.details == "IP Address already banned."){
+                            $('#blacklist-ip-content input').css('border-color', 'red');
+                            $('#blacklist-ip-content input').css('border-width', '2px');
+                            $('#blacklist-ip-content').css('margin-top', '0');
+                            $('#warning-msg').text("duplicated IP address").show();   
+			}
+			else{
+                            $('#alert > strong').text('Server Error!');
+                            $('#alert').show();
+			}
                     }
                 },
                 error: function(xhr, textStatus, errorThrown){
@@ -44,7 +52,7 @@ $(document).ready(function () {
             $('#blacklist-ip-content input').css('border-color', 'red');
             $('#blacklist-ip-content input').css('border-width', '2px');
             $('#blacklist-ip-content').css('margin-top', '0');
-            $('#warning-msg').show();
+            $('#warning-msg').text("wrong input format").show();
         }
     }); 
 

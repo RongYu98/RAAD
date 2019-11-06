@@ -31,6 +31,7 @@ def add_ip(request):
     if request.method == 'POST' and request.session['active']:
         data = {'ip': request.body.decode('utf-8').replace('ip=', '')}
         res = requests.post('http://127.0.0.1:9000/blacklist_ip', data=data).json()
+        print(res)
         return JsonResponse(res)
 
 def del_ip(request, ip):
