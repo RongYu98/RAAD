@@ -4,15 +4,13 @@
     <head>
         <title>Raad</title>
         <meta charset="UTF-8">
-        <!-- <meta Http-Equiv="Cache-Control" Content="no-cache">
-        <meta Http-Equiv="Pragma" Content="no-cache">
-        <meta Http-Equiv="Expires" Content="0">  -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+	<script src="{% static 'js/base.js' %}"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="{% static 'css/base.css' %}">
-        <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+	<link rel="shortcut icon"type="image/x-icon" href="{% static 'images/favicon.ico' %}">
         {% block head %}
         {% endblock %}        
     </head>
@@ -20,15 +18,12 @@
         <header>
             <img class='name_logo' src="{% static 'images/name.png'%}"></img>	
             <div id='alert' class="alert alert-danger fade in" style="display:none;">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <a href="" class="close">&times;</a>
                 <strong>{{alert_msg}}</strong>
             </div>
         </header>
         {% block content %}
         {% endblock %}
     </body>
-    <!-- <footer>
-        <p>Powered by Raad</p>
-    </footer> -->
 </html>
 

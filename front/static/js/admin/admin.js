@@ -1,12 +1,22 @@
 $(document).ready(function () {
+    function mark_red(tag){
+        $(tag).css('border-color', 'red');
+        $(tag).css('border-width', '2px');
+    }
+
+    function unmark_red(tag){
+        $(tag).css('border-color', '');
+        $(tag).css('border-width', '');
+    }
+
     // ADD IP
     $("#blacklist-ip-content button").click(function(){
         var ip_addr = $('#blacklist-ip-content input').val().trim();
-	
+	unmark_red('#blacklist-ip-content input');
         // check if the value is ip address format
         if(ip_addr.match(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)){
             // ajax call
-            var api_url = '/add_ip/'
+            var api_url = '/blacklist_ip/'
             $.ajax({
                 url: api_url,
                 headers: {
@@ -25,8 +35,7 @@ $(document).ready(function () {
                     }
                     else{
 			if(result.details == "IP Address already banned."){
-                            $('#blacklist-ip-content input').css('border-color', 'red');
-                            $('#blacklist-ip-content input').css('border-width', '2px');
+			    mark_red('#blacklist-ip-content input');
                             $('#blacklist-ip-content').css('margin-top', '0');
                             $('#warning-msg').text("duplicated IP address").show();   
 			}
@@ -42,15 +51,13 @@ $(document).ready(function () {
                 }
             });
             // hide warning
-            $('#blacklist-ip-content input').css('border-color', '');
-            $('#blacklist-ip-content input').css('border-width', '');
+            unmark_red('#blacklist-ip-content input');
             $('#blacklist-ip-content').css('margin-top', '2rem');
             $('#warning-msg').hide();
         }
         else{
             // show warning
-            $('#blacklist-ip-content input').css('border-color', 'red');
-            $('#blacklist-ip-content input').css('border-width', '2px');
+	    mark_red('#blacklist-ip-content input');
             $('#blacklist-ip-content').css('margin-top', '0');
             $('#warning-msg').text("wrong input format").show();
         }
@@ -61,15 +68,31 @@ $(document).ready(function () {
         var maxretry = $('#maxretry').val();
         var findtime = $('#findtime').val();
         var bantime = $('#bantime').val();
-        // check if the values are integer
-        if(maxretry.match(/[0-9 -()+]+$/) && findtime.match(/[0-9 -()+]+$/) && bantime.match(/[0-9 -()+]+$/)){
+        var no_error = true;
+	unmark_red('#maxretry');
+	unmark_red('#findtime');
+	unmark_red('#bantime');
+	// check if maxretry value is non-zero positive integer or not
+	if(!(parseInt(maxretry).toString() === maxretry && parseInt(maxretry) > 0)){
+		mark_red('#maxretry');
+                no_error &= false;
+	}
+	// check if findtime value is non-zero positive integer or not
+        if(!(parseInt(findtime).toString() === findtime && parseInt(findtime) > 0)){
+                mark_red('#findtime');
+                no_error &= false;
+        }
+        // check if maxretry value is non-zero positive integer or not
+        if(!(parseInt(bantime).toString() === bantime && parseInt(bantime) > 0)){
+                mark_red('#bantime');
+                no_error &= false;
+        }
+	if(no_error){		    
             // ajax call
-            var api_url = 'http://127.0.0.1:9000/set_threshold'
+            var api_url = '/set_threshold/'
             $.ajax({
                 url: api_url,
-                headers: {
-                    'Access-Control-Allow-Origin':'*',
-                },
+                headers: {'Access-Control-Allow-Origin':'*'},
                 contentType: "application/json",
                 dataType: 'json',
                 type: 'PUT',
@@ -79,37 +102,24 @@ $(document).ready(function () {
                         $('#maxretry').val(maxretry);
                         $('#findtime').val(findtime);
                         $('#bantime').val(bantime);
-                        $('#alert').hide();
+			$('#alert').attr('class', 'alert alert-info fade in');
+			$('#alert > strong').text('Succesfully Changed');
+			$('#alert').show();
                     }
                     else{
+			$('#alert').attr('class', 'alert alert-danger fade in');
                         $('#alert > strong').text('Server Error!');
-                        $('#alert').show();
+			$('#alert').show();
                     }
                 },
                 error: function(xhr, textStatus, errorThrown){
+   		    $('#alert').attr('class', 'alert alert-danger fade in');
                     $('#alert > strong').text('Internal Error!');
-                    $('#alert').show();
+		    $('#alert').show();
                 }
             });
         }
-        else{
-            if(!maxretry.match(/[0-9 -()+]+$/)){
-                // warning
-                $('#maxretry').css('border-color', 'red');
-                $('#maxretry').css('border-width', '2px');
-            } 
-            if(!findtime.match(/[0-9 -()+]+$/)){
-                // warning
-                $('#findtime').css('border-color', 'red');
-                $('#findtime').css('border-width', '2px');
-            } 
-            if(!bantime.match(/[0-9 -()+]+$/)){
-                // warning
-                $('#bantime').css('border-color', 'red');
-                $('#bantime').css('border-width', '2px');
-            }
-        }
-    })
+    });
     // MOD password
     $('#password-inner-content button').click(function(){
         var password = $('#password').val();
@@ -122,8 +132,7 @@ $(document).ready(function () {
             // ajax call
         }
         else{
-            $('#confirmed_password').css('border-color', 'red');
-            $('#confirmed_password').css('border-width', '2px');
+	    mark_red('#confirmed_password');
         }
-    })
+    });
 });

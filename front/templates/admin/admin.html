@@ -61,7 +61,7 @@
                                 {% for blacklist in blacklists %}
                                 <tr>
                                 <td>{{ blacklist.ip }}</td>
-				<td><button onclick="location.href='/del_ip/{{blacklist.ip}}/'" type="button" class="btn btn-danger">Remove</button></td>
+				<td><button onclick="location.href='/remove_blacklisted_ip/{{blacklist.ip}}/'" type="button" class="btn btn-danger">Remove</button></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

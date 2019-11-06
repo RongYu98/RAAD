@@ -11,8 +11,9 @@ urlpatterns = [
     #api
     path('signin/', api.signin, name='signin'),
     path('signout/', api.signout, name='signout'),
-    path('add_ip/', api.add_ip, name='add_ip'),
-    re_path(r'^del_ip/(?P<ip>[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3})/$', api.del_ip, name='del_ip'),
+    path('blacklist_ip/', api.blacklist_ip, name='blacklist_ip'),
+    re_path(r'^remove_blacklisted_ip/(?P<ip>[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3})/$', api.remove_blacklisted_ip, name='remove_blacklisted_ip'),
+    path('set_threshold/', api.set_threshold, name='set_threshold'),
     path('password/', api.password, name='api_password'),
 ]
 
