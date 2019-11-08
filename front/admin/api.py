@@ -30,7 +30,12 @@ def signout(request):
 
 def blacklist_ip(request):
     if request.method == 'POST' and request.session['active']:
-        data = {'ip': request.body.decode('utf-8').replace('ip=', '')}
+        body = request.body.decode('utf-8').split('&')
+        data = {}
+        for param in body:
+            if param.startswith('ip='):
+                data['ip'] = param.replace('ip=', '')
+                break
         res = requests.post('http://127.0.0.1:9000/blacklist_ip', data=data).json()
         return JsonResponse(res)
 
@@ -55,20 +60,22 @@ def set_threshold(request):
 
 
 def password(request):
-    if request.method == 'PUT':
-        if request.session['active']:
-            json_data = json.loads(request.body)
-#            body = str(request.body, 'utf-8').split('&')
-#            password, confirmed_password = None, None
+    if request.method == 'PUT' and request.session['active']:
+        body = request.body.decode('utf-8').split('&')
+        password, confirmed_password = None, None
             
-#            for param in body:
-#                if 'password=' in param:
-#                    password = param[9:].strip()
-#                elif 'confirmed_password=' in param:
-#                    confirmed_password = param[19:].strip()
+        for param in body:
+            if param.startswith('password='):
+                password = param[9:].strip()
+            elif param.startswith('confirmed_password='):
+                confirmed_password = param[19:].strip()
             
-            if password and confirmed_password and password == confirmed_password:
-                # api request
-                return redirect('/admin/password')
+        if password and confirmed_password and password == confirmed_password:
+            # update password
+            change = Account.objects.get(username="root")
+            # password = hashlib.sha256(password.encode()).hexdigest()
+            change.password = password
+            change.save()
+            return JsonResponse({"status": 200})
 
-    return redirect('/error/')
+    return JsonResponse({"status": 500})

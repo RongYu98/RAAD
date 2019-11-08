@@ -128,6 +128,34 @@ $(document).ready(function () {
             shaObj.update(password);
             var hash = shaObj.getHash("HEX");
             // ajax call
+            var api_url = '/password/'
+            $.ajax({
+                url: api_url,
+                headers: {'Access-Control-Allow-Origin':'*'},
+                contentType: "application/json",
+                dataType: 'json',
+                type: 'PUT',
+                data: {password: password, confirmed_password: confirmed_password},
+                success: function(result){
+                    if(result.status == 200){
+                        $('#password').val('');
+                        $('#confirmed_password').val('');
+                        $('#alert').attr('class', 'alert alert-info fade in');
+                        $('#alert > strong').text('Succesfully Changed');
+                        $('#alert').show();
+                    }
+                    else{
+            			$('#alert').attr('class', 'alert alert-danger fade in');
+                        $('#alert > strong').text('Server Error!');
+			            $('#alert').show();
+                    }
+                },
+                error: function(xhr, textStatus, errorThrown){
+   		            $('#alert').attr('class', 'alert alert-danger fade in');
+                    $('#alert > strong').text('Internal Error!');
+		            $('#alert').show();
+                }
+            });
         }
         else{
 	        mark_red('#confirmed_password');
