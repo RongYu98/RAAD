@@ -120,7 +120,7 @@ $(document).ready(function () {
     });
     // MOD password
     $('#password-inner-content button').click(function(){
-        var password = $('#password').val();
+        var password = $('#new_password').val();
         var confirmed_password = $('#confirmed_password').val();
         // check if the values are identical
         if(password == confirmed_password){
@@ -138,7 +138,7 @@ $(document).ready(function () {
                 data: {password: password, confirmed_password: confirmed_password},
                 success: function(result){
                     if(result.status == 200){
-                        $('#password').val('');
+                        $('#new_password').val('');
                         $('#confirmed_password').val('');
                         $('#alert').attr('class', 'alert alert-info fade in');
                         $('#alert > strong').text('Succesfully Changed');
