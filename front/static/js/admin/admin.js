@@ -126,8 +126,12 @@ $(document).ready(function () {
         if(password == confirmed_password){
             var shaObj = new jsSHA("SHA-256", "TEXT");
             shaObj.update(password);
-            var hash = shaObj.getHash("HEX");
-            console.log(hash);
+            var password_hash = shaObj.getHash("HEX");
+            
+            var shaObj = new jsSHA("SHA-256", "TEXT");
+            shaObj.update(confirmed_password);
+            var confirmed_password_hash = shaObj.getHash("HEX");
+            
             // ajax call
             var api_url = '/password/'
             $.ajax({
@@ -136,7 +140,7 @@ $(document).ready(function () {
                 contentType: "application/json",
                 dataType: 'json',
                 type: 'PUT',
-                data: {password: hash, confirmed_password: confirmed_password},
+                data: {password: password_hash, confirmed_password: confirmed_password_hash},
                 success: function(result){
                     if(result.status == 200){
                         $('#new_password').val('');
