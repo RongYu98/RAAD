@@ -4,17 +4,23 @@ from flask_cors import CORS
 from datetime import datetime
 import pymongo
 import time as TIME
+
+from threading import Timer
 import utils
 
 app = Flask(__name__)
 CORS(app)
+
+
+# scheduler = sched.scheduler(TIME.time, TIME.sleep)
+events = {} # basically ip address to whitelisting
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 login_records = client["login_records"]
 
 tolerance_time = 30 # in secnonds
 attempt_limit = 3 # number of attempts within the timespan limit before calling ban
-ban_time = 3600 # in seconds
+ban_time = 10 # in seconds
 
 @app.route('/failed_login', methods=['POST'])
 def record_failed_login():
@@ -39,18 +45,27 @@ def record_failed_login():
         return jsonify(status="Let's wait")
 
 def blacklistIP(ip_address):
-    if (login_records.ban.find_one({'ip':ip_address})==None):
+    print(ip_address)
+    data = login_records.ban.find_one({'ip':ip_address})
+    if (data==None or data==False):
         utils.ban(ip_address)
         login_records.ban.insert(
             {'ip':ip_address, 'start_time':TIME.time(), 'duration':ban_time})
-        # SCHEDULE EVENT TO WHITELIST
-        # THEN SAVE THE BANNING INTO A DICTIONARY, TO CANCEL IF THEY CHANGE THE TIME
 
+        print("ban_time "+str(ban_time))
+        
+        events[ip_address] = Timer(ban_time, whitelistIP, kwargs={"ip_address":ip_address})
+        events[ip_address].start()
+        print("Scheduled whitelisting")
+        return True
     # else do nothing? they already banned?
-    return None
+
+    return False
 def whitelistIP(ip_address):
     # CHECK TO SEE IF IT"S BEEN SCHEDULED, remove if it has?
     utils.unban(ip_address)
+    print(ip_address)
+    print("WHITELISTED")
     login_records.ban.delete_many({'ip':ip_address})
     return None
     
@@ -107,6 +122,9 @@ def remove_blacklisted_ip():
     info = request.values
     if ('ip' not in info):
         return jsonify(status=500, result='failed', details='IP Address not specified')
+    if (info['ip'] not in events):
+        return jsonify(status=500, result='failed', details='IP Address not banned')
+    events[info['ip']].cancel() # halt the timer, and then manually call it
     whitelistIP(info['ip'])
     return jsonify(status=200, result='success')
 
@@ -115,12 +133,13 @@ def blacklist_blacklisted_ip():
     info = request.form
     if ("ip" not in info):
         return jsonify(status=500, result='failed', details='IP Address not specified')
-    blacklistIP(info["ip"])
-    return jsonify(status=200, result='success')
+    if (blacklistIP(info["ip"])): # sucessfully blacklisted
+        return jsonify(status=200, result='success')
+    return jsonify(status=500, result='failed', details='IP Address already banned.')
 
 
 if __name__ == "__main__":
     # login_records.ban.insert({'ip':'1.1.1.1', 'time':TIME.time(), 'duration':ban_time})
-    blacklistIP('2.2.2.2')
+    blacklistIP('7.4.2.4')
     app.run(host='0.0.0.0', port=9000, debug=True)
     
