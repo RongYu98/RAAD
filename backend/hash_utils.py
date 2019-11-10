@@ -28,12 +28,23 @@ def hmac_hash(password, key):
     h = hmac.new(key.encode('utf-8'), password.encode('utf-8'), hashlib.sha256)
     return h.digest()
 
-def store_password(digest, key):
+def store_salt(key):
     import pymongo
     client = pymongo.MongoClient("mongodb://localhost:27017/")
     credentials = client["login_credentials"]
-    credentials.hash.delete_many({})
-    credentials.hash.insert({'digest':digest, 'key':key})
+    credentials.hash.remove({"salt":{"$exists":True}}) # delete the salt
+    credentials.hash.insert({"salt":key})
+    return)
+
+    
+def store_password(digest):
+    import pymongo
+    client = pymongo.MongoClient("mongodb://localhost:27017/")
+    credentials = client["login_credentials"]
+    #credentials.hash.delete_many({})
+    #credentials.hash.insert({'digest':digest, 'key':key})
+    credentials.hash.remove({"digest":{"$exists":True}}) # delete the hashed password
+    credentials.hash.insert({'digest':digest})
     return
 
 def get_password_digest(username):
@@ -42,7 +53,7 @@ def get_password_digest(username):
     credentials = client["login_credentials"]
     # data = credentials.hash.find_one({'username'username})
     # we're not using multiple users, so this one thing is fine.
-    data = credentials.hash.find_one({}) # should be only one in the database
+    data = credentials.hash.find_one({'digest'}) # should be only one in the database
     if (data==None):
         return None
     return data['digest']

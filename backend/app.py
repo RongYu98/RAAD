@@ -140,6 +140,8 @@ def blacklist_blacklisted_ip():
 
 @app.route('/get_random_salt', methods=['GET'])
 def random_salt():
+    salt = hash_utils.generate_salt()
+    hash_utils.store_salt(salt)
     return jsonify(status=200, result='success', detail=hash_utils.generate_salt())
 
 @app.route('/get_current_salt', methods=['GET'])
@@ -151,12 +153,10 @@ def get_salt():
 @app.route('/set_password', methods=['POST'])
 def set_password():
     info = request.values
-    if ('password' not in info or
-        'username' not in info or
-        'salt' not in info):
+    if ('password' not in info or 'username' not in info):
         return jsonify(status=500, result='failed', detail='missing password or username')
-    # ELSE ACTUALLY DO STUFF
-    # CONFIRM FIRST ON TELLO
+    hash_utils.store_password(info['password'])
+    return jsonify(status=200, result="success", detail="Set")
 
 @app.route('/check_password', methods=['POST'])
 def check_password():
