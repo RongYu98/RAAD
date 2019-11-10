@@ -8,7 +8,7 @@ def newMessage(arg):
     p = select.poll()
     p.register(f.stdout)
 
-    url = 'localhost:9000/failed_login'
+    url = 'http://localhost:9000/failed_login'
 
     while True:
         if p.poll(1):
@@ -18,7 +18,7 @@ def newMessage(arg):
                 if (message[5] == "Failed"):
                     ip = message[10]
                     validMessage = True
-                elif (message[5] + message[6] == "Connectionreset"):
+                elif (message[5] == "Connection" and (message[6] == "reset" or message[6] == "closed")):
                     ip = message[11]
                     validMessage = True
                 if validMessage:
