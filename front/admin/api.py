@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-# from .models import Account
 import hashlib, requests, json, hmac, base64
 
 def signin(request):
