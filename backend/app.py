@@ -7,6 +7,7 @@ import time as TIME
 
 from threading import Timer
 import utils
+import hash_utils
 
 app = Flask(__name__)
 CORS(app)
@@ -137,7 +138,36 @@ def blacklist_blacklisted_ip():
         return jsonify(status=200, result='success')
     return jsonify(status=500, result='failed', details='IP Address already banned.')
 
+@app.route('/get_random_salt', methods=['GET'])
+def random_salt():
+    salt = hash_utils.generate_salt()
+    hash_utils.store_salt(salt)
+    return jsonify(status=200, result='success', detail=hash_utils.generate_salt())
 
+@app.route('/get_current_salt', methods=['GET'])
+def get_salt():
+    salt = hash_utils.get_salt() # salt should never be None unless something went wrong...
+    return jsonify(status=200, result='success', detail=salt)
+
+
+@app.route('/set_password', methods=['POST'])
+def set_password():
+    info = request.values
+    if ('password' not in info or 'username' not in info):
+        return jsonify(status=500, result='failed', detail='missing password or username')
+    hash_utils.store_password(info['password'])
+    return jsonify(status=200, result="success", detail="Set")
+
+@app.route('/check_password', methods=['POST'])
+def check_password():
+    info = request.values
+    if ('password' not in info or 'username' not in info):
+        return jsonify(status=500, result='failed', detail='missing password or username')
+    digest = hash_utils.get_password_digest(info['username'])
+    if (digest==info['password']):
+        return jsonify(status=200, result='success')
+    return jsonify(status=500, result='failed', detail='Wrong password')
+    
 if __name__ == "__main__":
     # login_records.ban.insert({'ip':'1.1.1.1', 'time':TIME.time(), 'duration':ban_time})
     blacklistIP('7.4.2.4')
