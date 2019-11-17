@@ -1,22 +1,31 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-from .models import Account
-import hashlib, requests, json
+# from .models import Account
+import hashlib, requests, json, hmac, base64
 
 def signin(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        password = hashlib.sha256(password.encode()).hexdigest()
-                   
-        try:
-            if Account.objects.get(username=username, password=password):
+        # get current salt
+        res = requests.get('http://127.0.0.1:9000/get_current_salt').json()
+        if res and res['status'] == 200:
+            salt = res['detail']
+            password = hmac.new(salt.encode(), password.encode(), hashlib.sha256)
+            password.hexdigest()
+            # check password
+            data = {"password": password, "username": username}
+            res = requests.post('http://127.0.0.1:9000/check_password', data=data).json()
+            if res and res['status'] == 200:
                 request.session['active'] = True
                 return redirect('/admin/blacklist/')
-        except Account.DoesNotExist:
+            else:
+                request.session['active'] = False
+                return redirect('/')    
+        else:
             request.session['active'] = False
             return redirect('/')
-    
+            
     return redirect('/error/')
 
 
@@ -71,11 +80,15 @@ def password(request):
                 confirmed_password = param[19:].strip()
             
         if password and confirmed_password and password == confirmed_password:
-            # update password
-            change = Account.objects.get(username="root")
-            # password = hashlib.sha256(password.encode()).hexdigest()
-            change.password = password
-            change.save()
-            return JsonResponse({"status": 200})
-
+            # get random salt
+            res = requests.get('http://127.0.0.1:9000/get_random_salt').json()
+            if res and res['status'] == 200:
+                salt = res['detail']
+                password = hmac.new(salt.encode(), password.encode(), hashlib.sha256)
+                password.hexdigest()
+                # update password
+                data = {"password": password, "username": "root"}
+                res = requests.post('http://127.0.0.1:9000/set_password', data=data).json()
+                return JsonResponse({"status": res['status']})
+            
     return JsonResponse({"status": 500})

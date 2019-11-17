@@ -124,14 +124,6 @@ $(document).ready(function () {
         var confirmed_password = $('#confirmed_password').val();
         // check if the values are identical
         if(password == confirmed_password){
-            var shaObj = new jsSHA("SHA-256", "TEXT");
-            shaObj.update(password);
-            var password_hash = shaObj.getHash("HEX");
-            
-            var shaObj = new jsSHA("SHA-256", "TEXT");
-            shaObj.update(confirmed_password);
-            var confirmed_password_hash = shaObj.getHash("HEX");
-            
             // ajax call
             var api_url = '/password/'
             $.ajax({
