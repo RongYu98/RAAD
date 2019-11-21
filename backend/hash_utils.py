@@ -34,7 +34,7 @@ def store_salt(key):
     credentials = client["login_credentials"]
     credentials.hash.remove({"salt":{"$exists":True}}) # delete the salt
     credentials.hash.insert({"salt":key})
-    return)
+    return
 
     
 def store_password(digest):
