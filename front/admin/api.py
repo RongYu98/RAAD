@@ -11,7 +11,7 @@ def signin(request):
         if res and res['status'] == 200:
             salt = res['detail']
             password = hmac.new(salt.encode(), password.encode(), hashlib.sha256)
-            password.hexdigest()
+            password = password.hexdigest()
             # check password
             data = {"password": password, "username": username}
             res = requests.post('http://127.0.0.1:9000/check_password', data=data).json()
@@ -84,7 +84,7 @@ def password(request):
             if res and res['status'] == 200:
                 salt = res['detail']
                 password = hmac.new(salt.encode(), password.encode(), hashlib.sha256)
-                password.hexdigest()
+                password = password.hexdigest()
                 # update password
                 data = {"password": password, "username": "root"}
                 res = requests.post('http://127.0.0.1:9000/set_password', data=data).json()

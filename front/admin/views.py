@@ -5,6 +5,7 @@ import requests
 def home(request):
     if request.session.has_key('active'): # session is alive
         if request.session['active'] == False: # failed to login
+            del request.session['active']
             return render(request, 'admin/index.html', context={'active': False, 'alert_msg': 'Unsuccessful Login'})
         else: # previously logged in, but revisited
             del request.session['active']

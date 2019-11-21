@@ -122,6 +122,7 @@ $(document).ready(function () {
     $('#password-inner-content button').click(function(){
         var password = $('#new_password').val();
         var confirmed_password = $('#confirmed_password').val();
+        unmark_red("#confirmed_password");
         // check if the values are identical
         if(password == confirmed_password){
             // ajax call
@@ -132,7 +133,7 @@ $(document).ready(function () {
                 contentType: "application/json",
                 dataType: 'json',
                 type: 'PUT',
-                data: {password: password_hash, confirmed_password: confirmed_password_hash},
+                data: {password: password, confirmed_password: confirmed_password},
                 success: function(result){
                     if(result.status == 200){
                         $('#new_password').val('');
