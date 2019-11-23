@@ -23,16 +23,18 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'u05z72)jpl*#$_nc0o2dn!h2pad#mle1k$m$(frmztt$u2_^v0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
 SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_HTTPONLY=True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
 # Application definition
 
 INSTALLED_APPS = [
     'admin',
+    'sslserver',
     # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
