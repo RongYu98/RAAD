@@ -17,7 +17,7 @@ def blacklist(request):
     if request.session.has_key('active'): # session is alive
         if request.session['active']: # logged in with admin account
             try:
-                res = requests.get('http://127.0.0.1:9000/blacklisted_ips').json()
+                res = requests.get('https://127.0.0.1:9000/blacklisted_ips', verify=False).json()
                 if res and res['status'] == 200:
                     blacklists = res['detail']
                 return render(request, 'admin/admin.html', {'content_type':'blacklist', 'blacklists':blacklists})
@@ -33,7 +33,7 @@ def threshold(request):
     if request.session.has_key('active'): # session is alive
         if request.session['active']: # logged in with admin account
             try:
-                res = requests.get('http://127.0.0.1:9000/get_threshold').json()
+                res = requests.get('https://127.0.0.1:9000/get_threshold', verify=False).json()
                 if res and res['status'] == 200:
                     maxretry,findtime, bantime = res['detail']['maxretry'], res['detail']['findtime'], res['detail']['bantime']
                 else:

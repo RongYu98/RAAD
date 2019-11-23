@@ -3,7 +3,7 @@ from . import views, api
 
 urlpatterns = [
     #views
-    path('', views.home, name='home'),
+    path('admin/', views.home, name='home'),
     path('admin/blacklist/', views.blacklist, name='blacklist'),
     path('admin/threshold/', views.threshold, name='threshold'),
     path('admin/password/', views.password, name='password'),

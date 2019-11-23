@@ -7,14 +7,14 @@ def signin(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         # get current salt
-        res = requests.get('http://127.0.0.1:9000/get_current_salt').json()
+        res = requests.get('https://127.0.0.1:9000/get_current_salt', verify=False).json()
         if res and res['status'] == 200:
             salt = res['detail']
             password = hmac.new(salt.encode(), password.encode(), hashlib.sha256)
             password = password.hexdigest()
             # check password
             data = {"password": password, "username": username}
-            res = requests.post('http://127.0.0.1:9000/check_password', data=data).json()
+            res = requests.post('https://127.0.0.1:9000/check_password', data=data, verify=False).json()
             if res and res['status'] == 200:
                 request.session['active'] = True
                 return redirect('/admin/blacklist/')
@@ -44,13 +44,13 @@ def blacklist_ip(request):
             if param.startswith('ip='):
                 data['ip'] = param.replace('ip=', '')
                 break
-        res = requests.post('http://127.0.0.1:9000/blacklist_ip', data=data).json()
+        res = requests.post('https://127.0.0.1:9000/blacklist_ip', data=data, verify=False).json()
         return JsonResponse(res)
 
 
 def remove_blacklisted_ip(request, ip):
     if request.method == 'GET' and request.session['active']:
-        res = requests.delete('http://127.0.0.1:9000/remove_blacklisted_ip', data={'ip': ip}).json()
+        res = requests.delete('https://127.0.0.1:9000/remove_blacklisted_ip', data={'ip': ip}, verify=False).json()
         if res and res['status'] == 200:
             return redirect('/admin/blacklist/')
 
@@ -63,7 +63,7 @@ def set_threshold(request):
         data = {}
         for param in body:
             data[param.split('=')[0]] = param.split('=')[1]
-        res = requests.put('http://127.0.0.1:9000/set_threshold', data=data).json()
+        res = requests.put('https://127.0.0.1:9000/set_threshold', data=data, verify=False).json()
         return JsonResponse(res)
 
 
@@ -80,14 +80,14 @@ def password(request):
             
         if password and confirmed_password and password == confirmed_password:
             # get random salt
-            res = requests.get('http://127.0.0.1:9000/get_random_salt').json()
+            res = requests.get('https://127.0.0.1:9000/get_random_salt', verify=False).json()
             if res and res['status'] == 200:
                 salt = res['detail']
                 password = hmac.new(salt.encode(), password.encode(), hashlib.sha256)
                 password = password.hexdigest()
                 # update password
                 data = {"password": password, "username": "root"}
-                res = requests.post('http://127.0.0.1:9000/set_password', data=data).json()
+                res = requests.post('https://127.0.0.1:9000/set_password', data=data, verify=False).json()
                 return JsonResponse({"status": res['status']})
             
     return JsonResponse({"status": 500})
