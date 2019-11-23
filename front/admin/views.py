@@ -58,5 +58,5 @@ def password(request):
     else: # session is dead
         return redirect('/')
         
-def error():
-    return render(None, 'error.html', {})
+def error(request, exception=None):
+    return render(request, 'error.html', {})
