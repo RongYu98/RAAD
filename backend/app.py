@@ -9,6 +9,7 @@ from threading import Timer
 import utils
 import hash_utils
 
+
 app = Flask(__name__)
 CORS(app)
 
@@ -142,7 +143,7 @@ def blacklist_blacklisted_ip():
 def random_salt():
     salt = hash_utils.generate_salt()
     hash_utils.store_salt(salt)
-    return jsonify(status=200, result='success', detail=hash_utils.generate_salt())
+    return jsonify(status=200, result='success', detail=salt)
 
 @app.route('/get_current_salt', methods=['GET'])
 def get_salt():
@@ -164,6 +165,7 @@ def check_password():
     if ('password' not in info or 'username' not in info):
         return jsonify(status=500, result='failed', detail='missing password or username')
     digest = hash_utils.get_password_digest(info['username'])
+    print(digest)
     if (digest==info['password']):
         return jsonify(status=200, result='success')
     return jsonify(status=500, result='failed', detail='Wrong password')
@@ -171,5 +173,7 @@ def check_password():
 if __name__ == "__main__":
     # login_records.ban.insert({'ip':'1.1.1.1', 'time':TIME.time(), 'duration':ban_time})
     blacklistIP('7.4.2.4')
-    app.run(host='0.0.0.0', port=9000, debug=True)
+    #app.run(host='0.0.0.0', port=9000, debug=True)
+    # app.run(host='0.0.0.0', port=9000, debug=True, ssl_context=('adhoc'))
+    app.run(host='0.0.0.0', port=9000, debug=True, ssl_context=('/etc/ssl/certs/raad.crt', '/etc/ssl/certs/raad.key'))
     
