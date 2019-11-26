@@ -8,7 +8,7 @@ def authLogNewMessage(arg):
     p = select.poll()
     p.register(f.stdout)
 
-    url = 'http://localhost:9000/failed_login'
+    url = 'https://localhost:9000/failed_login'
 
     while True:
         if p.poll(1):
@@ -33,7 +33,7 @@ def authLogNewMessage(arg):
                 print(seconds)
                 print(ip)
                 data = {'ip':ip, 'time':seconds}
-                requests.post(url, json = data)
+                requests.post(url, json = data, verify = False)
 
 def sysLogNewMessage(arg):
     f = subprocess.Popen(['tail', '-F', '/var/log/syslog'],\
@@ -56,7 +56,7 @@ def sysLogNewMessage(arg):
                     print(seconds)
                     print(ip)
                     data = {'ip':ip, 'time':seconds}
-                    requests.post(url, json = data)
+                    requests.post(url, json = data, verify = False)
 
 
 watchManager = pyinotify.WatchManager()
