@@ -35,6 +35,12 @@
 #sign-in{
 	background-color:#ed553b;
 	margin-bottom: 20px;
+    width: 200px;
+    padding: 5px;
+    height: 40px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin: 10px;
 }
 #sign-in:hover{
 	box-shadow: 0 0 0 10px rgba(0,0,0,0.2);
