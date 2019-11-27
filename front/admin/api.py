@@ -4,8 +4,14 @@ import hashlib, requests, json, hmac, base64
 
 def signin(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        body = request.body.decode('utf-8').split('&')
+        username, password = '', ''
+        for param in body:
+            if param.startswith('username='):
+                username = param.replace('username=', '')
+            elif param.startswith('password='):
+                password = param.replace('password=', '')
+                                
         # get current salt
         res = requests.get('https://127.0.0.1:9000/get_current_salt', verify=False).json()
         if res and res['status'] == 200:
