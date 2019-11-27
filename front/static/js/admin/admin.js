@@ -8,11 +8,34 @@ $(document).ready(function () {
         $(tag).css('border-color', '');
         $(tag).css('border-width', '');
     }
-
+    // LOGIN
+    $('#sign-in').click(function(){
+        var username = $('#username input').val();
+        var password = $('#password input').val();
+        username.replace("<", "&lt");
+        username.replace(">", "&gt");
+        $('#alert').hide();
+        
+        // ajax call
+        var api_url = '/signin/'
+        $.ajax({
+            url: api_url,
+            headers: {'Access-Control-Allow-Origin':'*'},
+            contentType: "application/json",
+            dataType: 'json',
+            type: 'POST',
+            data: {username: username, password: password},
+            success: function(result){
+            },
+            error: function(xhr, textStatus, errorThrown){
+            }
+        });
+    });
     // ADD IP
     $("#blacklist-ip-content button").click(function(){
         var ip_addr = $('#blacklist-ip-content input').val().trim();
-	    unmark_red('#blacklist-ip-content input');
+        unmark_red('#blacklist-ip-content input');
+        $('#alert').hide();
         // check if the value is ip address format
         if(ip_addr.match(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)){
             // ajax call
@@ -70,6 +93,7 @@ $(document).ready(function () {
         unmark_red('#maxretry');
         unmark_red('#findtime');
         unmark_red('#bantime');
+        $('#alert').hide();
         // check if maxretry value is non-zero positive integer or not
         if(!(parseInt(maxretry).toString() === maxretry && parseInt(maxretry) > 0)){
             mark_red('#maxretry');
@@ -123,6 +147,7 @@ $(document).ready(function () {
         var password = $('#new_password').val();
         var confirmed_password = $('#confirmed_password').val();
         unmark_red("#confirmed_password");
+        $('#alert').hide();
         // check if the values are identical
         if(password == confirmed_password){
             // ajax call
