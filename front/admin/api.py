@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-import hashlib, requests, json, hmac, base64
+import hashlib, requests, json, hmac, base64, urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def signin(request):
     if request.method == 'POST':
