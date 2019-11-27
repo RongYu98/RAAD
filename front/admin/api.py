@@ -6,6 +6,9 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def signin(request):
     if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        '''
         body = request.body.decode('utf-8').split('&')
         username, password = '', ''
         for param in body:
@@ -13,6 +16,7 @@ def signin(request):
                 username = param.replace('username=', '')
             elif param.startswith('password='):
                 password = param.replace('password=', '')
+        '''
                                 
         # get current salt
         res = requests.get('https://127.0.0.1:9000/get_current_salt', verify=False).json()
@@ -25,17 +29,15 @@ def signin(request):
             res = requests.post('https://127.0.0.1:9000/check_password', data=data, verify=False).json()
             if res and res['status'] == 200:
                 request.session['active'] = True
-                return JsonResponse({"status": 200})
-                # return redirect('/admin/blacklist/')
+                return redirect('/admin/blacklist/')
             else:
                 request.session['active'] = False
-                # return redirect('/admin/')    
+                return redirect('/admin/')    
         else:
             request.session['active'] = False
-            # return redirect('/admin/')
+            return redirect('/admin/')
             
-    # return redirect('/error/')
-    return JsonResponse({"status": 500})
+    return redirect('/error/')
 
 
 def signout(request):
