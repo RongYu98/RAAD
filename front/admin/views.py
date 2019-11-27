@@ -25,9 +25,9 @@ def blacklist(request):
                 return render(request, 'admin/admin.html', {'content_type':'blacklist', 'blacklists':[]})
         else: #logged in with different account
             del request.session['active']
-            return redirect('/')
+            return redirect('/admin/')
     else: # session is dead
-        return redirect('/')
+        return redirect('/admin/')
 
 def threshold(request):
     if request.session.has_key('active'): # session is alive
@@ -44,9 +44,9 @@ def threshold(request):
                 return render(request, 'admin/admin.html', {'content_type':'threshold', 'maxretry': maxretry, 'findtime': findtime, 'bantime': bantime})
         else: #logged in with different account
             del request.session['active']
-            return redirect('/')
+            return redirect('/admin/')
     else: # session is dead
-        return redirect('/')
+        return redirect('/admin/')
         
 def password(request):
     if request.session.has_key('active'): # session is alive
@@ -54,9 +54,9 @@ def password(request):
             return render(request, 'admin/admin.html', {'content_type':'password'})
         else: #logged in with different account
             del request.session['active']
-            return redirect('/')
+            return redirect('/admin/')
     else: # session is dead
-        return redirect('/')
+        return redirect('/admin/')
         
 def error(request, exception=None):
     return render(request, 'error.html', {})

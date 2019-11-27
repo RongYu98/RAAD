@@ -20,10 +20,10 @@ def signin(request):
                 return redirect('/admin/blacklist/')
             else:
                 request.session['active'] = False
-                return redirect('/')    
+                return redirect('/admin/')    
         else:
             request.session['active'] = False
-            return redirect('/')
+            return redirect('/admin/')
             
     return redirect('/error/')
 
@@ -31,7 +31,7 @@ def signin(request):
 def signout(request):
     if request.method == 'GET' and request.session['active']:
         request.session.flush()
-        return redirect('/')
+        return redirect('/admin/')
     
     return redirect('/error/')
 
