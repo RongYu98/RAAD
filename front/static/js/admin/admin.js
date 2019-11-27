@@ -8,29 +8,6 @@ $(document).ready(function () {
         $(tag).css('border-color', '');
         $(tag).css('border-width', '');
     }
-    // LOGIN
-    $('#sign-in').click(function(){
-        var username = $('#username input').val();
-        var password = $('#password input').val();
-        username.replace("<", "&lt");
-        username.replace(">", "&gt");
-        $('#alert').hide();
-        
-        // ajax call
-        var api_url = '/signin/'
-        $.ajax({
-            url: api_url,
-            headers: {'Access-Control-Allow-Origin':'*'},
-            contentType: "application/json",
-            dataType: 'json',
-            type: 'POST',
-            data: {username: username, password: password},
-            success: function(result){
-            },
-            error: function(xhr, textStatus, errorThrown){
-            }
-        });
-    });
     // ADD IP
     $("#blacklist-ip-content button").click(function(){
         var ip_addr = $('#blacklist-ip-content input').val().trim();
