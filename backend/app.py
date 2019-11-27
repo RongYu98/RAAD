@@ -20,7 +20,7 @@ events = {} # basically ip address to whitelisting
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 login_records = client["login_records"]
 
-tolerance_time = 30 # in secnonds
+tolerance_time = 100 # in secnonds
 attempt_limit = 3 # number of attempts within the timespan limit before calling ban
 ban_time = 10 # in seconds
 
@@ -33,14 +33,16 @@ def record_failed_login():
     failed = login_records.failed
     login_records.failed.insert(
         {"ip":ip_address, "time":time}) # time shall be converted to seconds
-    attempts = db.accounts.find({"ip":ip_address})
-    t = time.time()
+    attempts = login_records.failed.find({"ip":ip_address})
+    t = TIME.time()
     failedWithinTime = 0
     for attempt in attempts:
-        time = attempts["time"]
-        if (t-time < timespan_limit):
+        print(attempt)
+        time = attempt["time"]
+        if (t-time < tolerance_time):
             failedWithinTime += 1
-    if failedWithinTime > attempt_limit:
+    print(failedWithinTime)
+    if failedWithinTime >= attempt_limit:
         blacklistIP(ip_address)
         return jsonify(status="BANNED")
     else:
