@@ -23,15 +23,17 @@ def signin(request):
             res = requests.post('https://127.0.0.1:9000/check_password', data=data, verify=False).json()
             if res and res['status'] == 200:
                 request.session['active'] = True
-                return redirect('/admin/blacklist/')
+                return JsonResponse({"status": 200})
+                # return redirect('/admin/blacklist/')
             else:
                 request.session['active'] = False
-                return redirect('/admin/')    
+                # return redirect('/admin/')    
         else:
             request.session['active'] = False
-            return redirect('/admin/')
+            # return redirect('/admin/')
             
-    return redirect('/error/')
+    # return redirect('/error/')
+    return JsonResponse({"status": 500})
 
 
 def signout(request):

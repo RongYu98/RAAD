@@ -17,8 +17,15 @@ $(document).ready(function () {
             type: 'POST',
             data: {username: username, password: password},
             success: function(result){
+                if(result.status == 200){
+                    window.location.href = "/admin/blacklist";
+                }
+                else{
+                    window.location.href = "/admin";
+                }
             },
             error: function(xhr, textStatus, errorThrown){
+                window.location.href = "/admin";
             }
         });
     });
