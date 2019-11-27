@@ -9,24 +9,16 @@ def generate_salt():
         salt += letters[random.randint(0, len(letters)-1)]
     return salt
 
-def store_hash(salt):
-    import pymongo
-    client = pymongo.MongoClient("mongodb://localhost:27017/")
-    credentials = client["login_credentials"]
-    credentials.salt.delete_many({}) # delete everything
-    credentials.salt.insert({'salt':salt})
-    return
-
 def get_salt():
     import pymongo
     client = pymongo.MongoClient("mongodb://localhost:27017/")
     credentials = client["login_credentials"]
-    return credentials.salt.find_one({})
+    return credentials.hash.find_one({"salt":{"$exists":True}})["salt"]
     
 
 def hmac_hash(password, key):
     h = hmac.new(key.encode('utf-8'), password.encode('utf-8'), hashlib.sha256)
-    return h.digest()
+    return h.hexdigest()
 
 def store_salt(key):
     import pymongo
@@ -36,7 +28,6 @@ def store_salt(key):
     credentials.hash.insert({"salt":key})
     return
 
-    
 def store_password(digest):
     import pymongo
     client = pymongo.MongoClient("mongodb://localhost:27017/")
@@ -53,7 +44,8 @@ def get_password_digest(username):
     credentials = client["login_credentials"]
     # data = credentials.hash.find_one({'username'username})
     # we're not using multiple users, so this one thing is fine.
-    data = credentials.hash.find_one({'digest'}) # should be only one in the database
+    data = credentials.hash.find_one({'digest':{"$exists":True}}) # should be only one in the database
     if (data==None):
         return None
+    print(data)
     return data['digest']

@@ -9,6 +9,7 @@ from threading import Timer
 import utils
 import hash_utils
 
+
 app = Flask(__name__)
 CORS(app)
 
@@ -19,7 +20,7 @@ events = {} # basically ip address to whitelisting
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 login_records = client["login_records"]
 
-tolerance_time = 30 # in secnonds
+tolerance_time = 100 # in secnonds
 attempt_limit = 3 # number of attempts within the timespan limit before calling ban
 ban_time = 10 # in seconds
 
@@ -32,14 +33,16 @@ def record_failed_login():
     failed = login_records.failed
     login_records.failed.insert(
         {"ip":ip_address, "time":time}) # time shall be converted to seconds
-    attempts = db.accounts.find({"ip":ip_address})
-    t = time.time()
+    attempts = login_records.failed.find({"ip":ip_address})
+    t = TIME.time()
     failedWithinTime = 0
     for attempt in attempts:
-        time = attempts["time"]
-        if (t-time < timespan_limit):
+        print(attempt)
+        time = attempt["time"]
+        if (t-time < tolerance_time):
             failedWithinTime += 1
-    if failedWithinTime > attempt_limit:
+    print(failedWithinTime)
+    if failedWithinTime >= attempt_limit:
         blacklistIP(ip_address)
         return jsonify(status="BANNED")
     else:
@@ -142,7 +145,7 @@ def blacklist_blacklisted_ip():
 def random_salt():
     salt = hash_utils.generate_salt()
     hash_utils.store_salt(salt)
-    return jsonify(status=200, result='success', detail=hash_utils.generate_salt())
+    return jsonify(status=200, result='success', detail=salt)
 
 @app.route('/get_current_salt', methods=['GET'])
 def get_salt():
@@ -164,6 +167,7 @@ def check_password():
     if ('password' not in info or 'username' not in info):
         return jsonify(status=500, result='failed', detail='missing password or username')
     digest = hash_utils.get_password_digest(info['username'])
+    print(digest)
     if (digest==info['password']):
         return jsonify(status=200, result='success')
     return jsonify(status=500, result='failed', detail='Wrong password')
@@ -171,5 +175,7 @@ def check_password():
 if __name__ == "__main__":
     # login_records.ban.insert({'ip':'1.1.1.1', 'time':TIME.time(), 'duration':ban_time})
     blacklistIP('7.4.2.4')
-    app.run(host='0.0.0.0', port=9000, debug=True)
+    #app.run(host='0.0.0.0', port=9000, debug=True)
+    # app.run(host='0.0.0.0', port=9000, debug=True, ssl_context=('adhoc'))
+    app.run(host='0.0.0.0', port=9000, debug=True, ssl_context=('/etc/ssl/certs/raad.crt', '/etc/ssl/certs/raad.key'))
     

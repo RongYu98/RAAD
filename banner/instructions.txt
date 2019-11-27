@@ -1,0 +1,9 @@
+Script Process:
+1. Install MongoDB, and all the dependencies and related libraries in requirements.txt, including pymongo.
+2. From backend, import hash_utils.py.
+3. Ask the user for a password.
+4. Call hash_utils.generate_salt() to get a random salt.
+5. Store the salt into with hash_utils.store_salt( salt ).
+6. Call hash_utils.hmac_hash( user_password, salt ) to get a hexidecimal digest.
+7. Call hash_utils.store_password( hexdigest ) to store the digest of the hash.
+8. Run the front end, backend, and log processor.
