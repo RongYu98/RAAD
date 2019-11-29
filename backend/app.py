@@ -20,7 +20,7 @@ events = {} # basically ip address to whitelisting
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 login_records = client["login_records"]
 
-tolerance_time = 100 # in secnonds
+tolerance_time = 60 # in minutes
 attempt_limit = 3 # number of attempts within the timespan limit before calling ban
 ban_time = 10 # in seconds
 
@@ -172,10 +172,22 @@ def check_password():
         return jsonify(status=200, result='success')
     return jsonify(status=500, result='failed', detail='Wrong password')
     
+def startup():
+    # function to initiate ban-values, and to check past blacklistings
+    
+    global tolerance_time # 5
+    global attempt_limit # 3
+    global ban_time # 3600
+
+    # check the db
+    # if value exists, yay, store, if not, intiate to current values
+
+    # check list of bannings, if any should retire, call the whitelist function
+    
 if __name__ == "__main__":
     # login_records.ban.insert({'ip':'1.1.1.1', 'time':TIME.time(), 'duration':ban_time})
-    blacklistIP('7.4.2.4')
-    #app.run(host='0.0.0.0', port=9000, debug=True)
+    # blacklistIP('7.4.2.4')
+    # app.run(host='0.0.0.0', port=9000, debug=True)
     # app.run(host='0.0.0.0', port=9000, debug=True, ssl_context=('adhoc'))
     app.run(host='0.0.0.0', port=9000, debug=True, ssl_context=('/etc/ssl/certs/raad.crt', '/etc/ssl/certs/raad.key'))
     
