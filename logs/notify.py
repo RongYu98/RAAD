@@ -45,7 +45,7 @@ def authLogNewMessage(arg):
                 print(seconds)
                 print(ip)
                 data = {'ip':ip, 'time':seconds, 'source':source, 'failed':failed}
-               # requests.post(url, json = data, verify = False)
+                requests.post(url, json = data, verify = False)
 
 def sysLogNewMessage(arg):
     f = subprocess.Popen(['tail', '-F', '/var/log/syslog'],\
@@ -68,21 +68,49 @@ def sysLogNewMessage(arg):
                 elif (message[6] == "opened"):
                     validMessage = True
                     failed = False
-                if validMessage and source:
-                    ip = message[5].split("|")[3]
-                    month = strptime(message[0], '%b').tm_mon
-                    day = int(message[1])
-                    time = message[2].split(':')
-                    seconds = datetime.datetime(2019, month, day, int(time[0]), int(time[1]), int(time[2])).timestamp()
-                    print(seconds)
-                    print(ip)
-                    data = {'ip':ip, 'time':seconds, 'source':source, 'failed':failed}
-                    #requests.post(url, json = data, verify = False)
+            if validMessage and source:
+                ip = message[5].split("|")[3]
+                month = strptime(message[0], '%b').tm_mon
+                day = int(message[1])
+                time = message[2].split(':')
+                seconds = datetime.datetime(2019, month, day, int(time[0]), int(time[1]), int(time[2])).timestamp()
+                print(seconds)
+                print(ip)
+                data = {'ip':ip, 'time':seconds, 'source':source, 'failed':failed}
+                requests.post(url, json = data, verify = False)
+
+def MWLogNewMessage(arg):
+    f = subprocess.Popen(['tail', '-F', '/var/www/html/mediawiki/extensions/RAAD/RAADMW.log'],\
+            stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    p = select.poll()
+    p.register(f.stdout)
+
+    url = 'http://localhost:9000/failed_login'
+
+    while True:
+        if p.poll(1):
+            message = f.stdout.readline().decode().split()
+            validMessage = False
+            source = 'media'
+            failed = True
+            if (message[1] == "Failed"):
+                validMessage = True
+            elif (message[1] == "Successful"):
+                validMessage = True
+                failed = False
+            if validMessage:
+                ip = message[4]
+                seconds = message[0]
+                print(seconds)
+                print(ip)
+                data = {'ip':ip, 'time':seconds, 'source':source, 'failed':failed}
+                requests.post(url, json = data, verify = False)
 
 
 watchManager = pyinotify.WatchManager()
 watchManager.add_watch('/var/log/auth.log', pyinotify.IN_MODIFY, authLogNewMessage)
 watchManager.add_watch('/var/log/syslog', pyinotify.IN_MODIFY, sysLogNewMessage)
+watchManager.add_watch('/var/www/html/mediawiki/extensions/RAAD/RAADMW.log', pyinotify.IN_MODIFY, MWLogNewMessage)
 
 eventNotifier = pyinotify.Notifier(watchManager)
 print("Awaiting new messages...")
