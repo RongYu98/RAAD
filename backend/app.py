@@ -5,6 +5,8 @@ from datetime import datetime
 import pymongo
 import time as TIME
 
+import os
+
 from threading import Timer
 import utils
 import hash_utils
@@ -30,6 +32,10 @@ def record_failed_login():
     ip_address = info['ip']
     time = info['time']
     source = info['source']
+    failed = info['failed']
+
+    if (failed==False):
+        return record_successful_login()
     
     failed = login_records.failed
     login_records.failed.insert(
@@ -72,19 +78,24 @@ def whitelistIP(ip_address):
     utils.unban(ip_address)
     print(ip_address)
     print("WHITELISTED")
+    if (ip_address in events):
+        del events[ip_address]
+        
     login_records.ban.delete_many({'ip':ip_address})
     return None
-    
+
     
 @app.route('/successful_login', methods=['POST'])
 def record_successful_login():
     info = request.json
     ip_address = info['ip']
     time = info['time']
-    if login_records.failed.find_one({"ip":ip_address})==None:
+    source = info['source']
+    
+    if login_records.failed.find_one({"ip":ip_address, 'source':source})==None:
         return jsonify(status="Great Kid")
     else:
-        login_records.failed.delete_many({"ip":ip_address})
+        login_records.failed.delete_many({"ip":ip_address, 'source':source})
         return jsonify(status="Delinquet Pardoned")
     
 @app.route('/get_threshold', methods=['GET'])
@@ -184,7 +195,7 @@ def check_password():
     if (digest==info['password']):
         return jsonify(status=200, result='success')
     return jsonify(status=500, result='failed', detail='Wrong password')
-    
+
 def startup():
     # function to initiate ban-values, and to check past blacklistings
     
@@ -193,8 +204,8 @@ def startup():
     global ban_time # 3600
 
     data = login_records.thresholds.find_one({'ban_time':{"$exists":True},
-                                          'tolerance_time':{"$exists":True},
-                                          'attempt_limit':{"$exists":True}})
+                                              'tolerance_time':{"$exists":True},
+                                              'attempt_limit':{"$exists":True}})
     print(data)
     if (data==None):
         tolerance_time = 5 # minutes
@@ -216,7 +227,7 @@ def startup():
         if (time < 1): # if should be whitelisting in 1 second or less, then it will whitelist now
             whitelistIP(d['ip'])
         else: # schedule whitelisting
-            events[d['ip']] = Timer(ban_time, whitelistIP, kwargs={"ip_address":d['ip']})
+            events[d['ip']] = Timer(time, whitelistIP, kwargs={"ip_address":d['ip']})
             events[d['ip']].start()
 
     
@@ -226,5 +237,8 @@ if __name__ == "__main__":
     # blacklistIP('7.4.2.4')
     # app.run(host='0.0.0.0', port=9000, debug=True)
     # app.run(host='0.0.0.0', port=9000, debug=True, ssl_context=('adhoc'))
-    app.run(host='0.0.0.0', port=9000, debug=True, ssl_context=('/etc/ssl/certs/raad.crt', '/etc/ssl/certs/raad.key'))
-    
+    # app.run(host='0.0.0.0', port=9000, debug=True, ssl_context=('/etc/ssl/certs/raad.crt', '/etc/ssl/certs/raad.key'))
+    if (os.path.isfile('/etc/ssl/certs/raad.crt') and os.path.isfile('/etc/ssl/certs/raa.key')):
+        app.run(host='0.0.0.0', port=9000, debug=True, ssl_context=('/etc/ssl/certs/raad.crt', '/etc/ssl/certs/raa.key'))
+    else:
+        app.run(host='0.0.0.0', port=9000, debug=True, ssl_context=('adhoc'))
