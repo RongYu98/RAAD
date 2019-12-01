@@ -29,11 +29,13 @@ def record_failed_login():
     info = request.json # subject to change
     ip_address = info['ip']
     time = info['time']
-
+    source = info['source']
+    
     failed = login_records.failed
     login_records.failed.insert(
-        {"ip":ip_address, "time":time}) # time shall be converted to seconds
-    attempts = login_records.failed.find({"ip":ip_address})
+        {"ip":ip_address, "time":time, 'source':source}) # time shall be converted to seconds
+    attempts = login_records.failed.find({"ip":ip_address, 'source':source})
+    
     t = TIME.time()
     failedWithinTime = 0
     for attempt in attempts:
@@ -103,6 +105,7 @@ def set_threshold():
 
     ## need to have them all together
     try:
+        print(info)
         if ("findtime" in info):
             tolerance_time = int(info["findtime"])
         if ("maxretry" in info):
@@ -111,6 +114,16 @@ def set_threshold():
             ban_time = int(info["bantime"])
     except Exception as e:
         return jsonify(status=500, result='failed', detail=e)
+    thresholds = login_records.thresholds.find_one({'ban_time':{"$exists":True},
+                                                    'tolerance_time':{"$exists":True},
+                                                    'attempt_limit':{"$exists":True}})
+    print(thresholds)
+    login_records.thresholds.update(thresholds, {'ban_time':ban_time,
+                                                 'tolerance_time':tolerance_time,
+                                                 'attempt_limit':attempt_limit})
+    print(tolerance_time, attempt_limit, ban_time)
+
+        
     return jsonify(status=200, result='success')
 
 @app.route('/blacklisted_ips', methods=['GET'])
@@ -179,12 +192,36 @@ def startup():
     global attempt_limit # 3
     global ban_time # 3600
 
-    # check the db
-    # if value exists, yay, store, if not, intiate to current values
+    data = login_records.thresholds.find_one({'ban_time':{"$exists":True},
+                                          'tolerance_time':{"$exists":True},
+                                          'attempt_limit':{"$exists":True}})
+    print(data)
+    if (data==None):
+        tolerance_time = 5 # minutes
+        attempt_limit = 3 # tries
+        ban_time = 3600 # seconds
+        print("data initiated")
+        login_records.thresholds.insert({'ban_time':3600,
+                                         'tolerance_time':5,
+                                         'attempt_limit':3})
+    else:
+        tolerance_time = data['tolerance_time']
+        ban_time = data['ban_time']
+        attempt_limit = data['attempt_limit']
 
-    # check list of bannings, if any should retire, call the whitelist function
+    data = login_records.ban.find({})
+    
+    for d in data:
+        time = d['start_time']+d['duration'] - TIME.time() # basically, see if it should still be banned
+        if (time < 1): # if should be whitelisting in 1 second or less, then it will whitelist now
+            whitelistIP(d['ip'])
+        else: # schedule whitelisting
+            events[d['ip']] = Timer(ban_time, whitelistIP, kwargs={"ip_address":d['ip']})
+            events[d['ip']].start()
+
     
 if __name__ == "__main__":
+    startup()
     # login_records.ban.insert({'ip':'1.1.1.1', 'time':TIME.time(), 'duration':ban_time})
     # blacklistIP('7.4.2.4')
     # app.run(host='0.0.0.0', port=9000, debug=True)
