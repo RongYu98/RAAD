@@ -19,9 +19,6 @@ def unban(ip):
     # Traverse through INPUT table for rules matching src ip and delete
     chain = iptc.Chain(table, "INPUT")
     for rule in chain.rules:
-        print(rule.src if rule.src else "no src")
-        print(rule.src.split('/')[0])
-        print("^^")
         if rule.src and ip in rule.src.split('/')[0]:
             chain.delete_rule(rule)
     table.commit()
