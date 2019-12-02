@@ -223,6 +223,9 @@ def startup():
     data = login_records.ban.find({})
     
     for d in data:
+        if (d==None):
+            continue
+        print(d)
         time = d['start_time']+d['duration'] - TIME.time() # basically, see if it should still be banned
         if (time < 1): # if should be whitelisting in 1 second or less, then it will whitelist now
             whitelistIP(d['ip'])
