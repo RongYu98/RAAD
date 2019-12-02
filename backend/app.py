@@ -15,8 +15,6 @@ import hash_utils
 app = Flask(__name__)
 CORS(app)
 
-
-# scheduler = sched.scheduler(TIME.time, TIME.sleep)
 events = {} # basically ip address to whitelisting
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
@@ -100,6 +98,8 @@ def record_successful_login():
     
 @app.route('/get_threshold', methods=['GET'])
 def get_threshold():
+    print
+    
     global tolerance_time
     global attempt_limit
     global ban_time
