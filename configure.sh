@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 password='false'
 password2='true'
 while [ "$password" != "$password2" ]; do
