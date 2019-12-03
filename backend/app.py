@@ -44,11 +44,12 @@ def record_failed_login():
     failedWithinTime = 0
     for attempt in attempts:
         print(attempt)
-        time = attempt["time"]
-        if (t-time < tolerance_time):
+        time = float(attempt["time"])
+        if (t-time < tolerance_time*60):
             failedWithinTime += 1
     print(failedWithinTime)
     if failedWithinTime >= attempt_limit:
+        print("going to blacklist")
         blacklistIP(ip_address)
         return jsonify(status="BANNED")
     else:
