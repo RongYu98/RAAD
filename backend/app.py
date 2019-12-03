@@ -43,7 +43,7 @@ def record_failed_login():
     t = TIME.time()
     failedWithinTime = 0
     for attempt in attempts:
-        print(attempt)
+        # print(attempt)
         time = float(attempt["time"])
         if (t-time < tolerance_time*60):
             failedWithinTime += 1
@@ -55,32 +55,36 @@ def record_failed_login():
     else:
         return jsonify(status="Let's wait")
 
-def blacklistIP(ip_address):
-    print(ip_address)
+def blacklistIP(ip_address, time=-1):
+    if (time==-1):
+        time = ban_time
     data = login_records.ban.find_one({'ip':ip_address})
     if (data==None or data==False):
         utils.ban(ip_address)
         login_records.ban.insert(
             {'ip':ip_address, 'start_time':TIME.time(), 'duration':ban_time})
 
-        print("ban_time "+str(ban_time))
+        print("Blacklisted: "+ip_address+" for "+str(time)+" seconds")
         
-        events[ip_address] = Timer(ban_time, whitelistIP, kwargs={"ip_address":ip_address})
+        events[ip_address] = Timer(time, whitelistIP, kwargs={"ip_address":ip_address})
         events[ip_address].start()
-        print("Scheduled whitelisting")
         return True
     # else do nothing? they already banned?
-
+    print(data)
+    print("Failed Blacklisting: "+ip_address)
     return False
 def whitelistIP(ip_address):
     # CHECK TO SEE IF IT"S BEEN SCHEDULED, remove if it has?
+    data = login_records.ban.find_one({'ip':ip_address})
+
+    login_records.ban.delete_many({"ip":ip_address})
     utils.unban(ip_address)
-    print(ip_address)
-    print("WHITELISTED")
-    if (ip_address in events):
+
+    print("Whitelisted: "+ip_address)
+
+    if (ip_address in events): # remove timer
         del events[ip_address]
         
-    login_records.ban.delete_many({'ip':ip_address})
     return None
 
     
@@ -222,19 +226,23 @@ def startup():
         attempt_limit = data['attempt_limit']
 
     data = login_records.ban.find({})
-    
-    for d in data:
-        if (d==None):
-            continue
-        print(d)
-        time = d['start_time']+d['duration'] - TIME.time() # basically, see if it should still be banned
-        if (time < 1): # if should be whitelisting in 1 second or less, then it will whitelist now
-            whitelistIP(d['ip'])
-        else: # schedule whitelisting
-            events[d['ip']] = Timer(time, whitelistIP, kwargs={"ip_address":d['ip']})
-            events[d['ip']].start()
-
-    
+    if (data!=None):
+        print(data)
+        for d in data:
+            if (d==None):
+                continue
+            time = d['start_time']+d['duration'] - TIME.time() # basically, see if it should still be banned
+            if (time < 1): # if should be whitelisting in 1 second or less, then it will whitelist now
+                print(d)
+                print("going to whitelist the above")
+                whitelistIP(d['ip'])
+                print("WHITELISTED BECAUSE FROM PAST")
+            else: # schedule whitelisting
+                print("whitelisting scheduled for: "+d['ip'])
+                events[d['ip']] = Timer(time, whitelistIP, kwargs={"ip_address":d['ip']})
+                events[d['ip']].start()
+        
+        
 if __name__ == "__main__":
     startup()
     # login_records.ban.insert({'ip':'1.1.1.1', 'time':TIME.time(), 'duration':ban_time})
