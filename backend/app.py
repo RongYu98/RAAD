@@ -65,6 +65,7 @@ def blacklistIP(ip_address, time=-1):
             {'ip':ip_address, 'start_time':TIME.time(), 'duration':ban_time})
 
         print("Blacklisted: "+ip_address+" for "+str(time)+" seconds")
+        utils.iptquery()
         
         events[ip_address] = Timer(time, whitelistIP, kwargs={"ip_address":ip_address})
         events[ip_address].start()
@@ -75,12 +76,12 @@ def blacklistIP(ip_address, time=-1):
     return False
 def whitelistIP(ip_address):
     # CHECK TO SEE IF IT"S BEEN SCHEDULED, remove if it has?
-    data = login_records.ban.find_one({'ip':ip_address})
+    # data = login_records.ban.find_one({'ip':ip_address})
 
     login_records.ban.delete_many({"ip":ip_address})
     utils.unban(ip_address)
 
-    print("Whitelisted: "+ip_address)
+    print("\nWhitelisted: "+ip_address)
 
     if (ip_address in events): # remove timer
         del events[ip_address]
