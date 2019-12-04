@@ -1,4 +1,4 @@
-import pyinotify, subprocess, select, re, requests, datetime
+import subprocess, select, re, requests, datetime
 from subprocess import Popen, PIPE
 from time import strptime
 from time import sleep
