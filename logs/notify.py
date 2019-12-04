@@ -19,12 +19,11 @@ p2.register(f2.stdout)
 p3 = select.poll()
 p3.register(f3.stdout)
 
-print("Checked Auth Log")
 url = 'https://localhost:9000/failed_login'
 
 while True:
     if p1.poll(1):
-        print("SSH Checked")
+        #print("SSH Checked")
         message = f1.stdout.readline().decode().split()
         validMessage = False
         source = None
@@ -47,11 +46,11 @@ while True:
             if (message[5] + message[6] == "userdenied:"):
                 ip = message[10]
                 validMessage = True
-            if (message[5] + message[6] == 'userauthenticated:'):
+            elif (message[5] + message[6] == 'userauthenticated:'):
                 ip = message[9]
                 validMessage = True
                 failed = False
-            if (message[5] + message[6] == 'message repeated' and message[10] + message[11] == 'userdenied:'):
+            elif (message[5] + message[6] == 'message repeated' and message[10] + message[11] == 'userdenied:'):
                 try:
                     repeat = int(message[7])
                     ip = message[15]
@@ -63,13 +62,12 @@ while True:
             day = int(message[1])
             time = message[2].split(':')
             seconds = datetime.datetime(2019, month, day, int(time[0]), int(time[1]), int(time[2])).timestamp()
-            print(seconds)
-            print(ip)
             data = {'ip':ip, 'time':seconds, 'source':source, 'failed':failed}
             for x in range(repeat):
+                print("Login attempt from " + ip + " at " + str(seconds))
                 requests.post(url, json = data, verify = False)
     if p2.poll(1):
-        print("Drupal Checked")
+        #print("Drupal Checked")
         message = f2.stdout.readline().decode().split()
         validMessage = False
         source = None
@@ -87,12 +85,11 @@ while True:
             day = int(message[1])
             time = message[2].split(':')
             seconds = datetime.datetime(2019, month, day, int(time[0]), int(time[1]), int(time[2])).timestamp()
-            print(seconds)
-            print(ip)
+            print("Login attempt from " + ip + " at " + str(seconds))
             data = {'ip':ip, 'time':seconds, 'source':source, 'failed':failed}
             requests.post(url, json = data, verify = False)
     if p3.poll(1):
-        print("MediaWiki Checked")
+        #print("MediaWiki Checked")
         message = f3.stdout.readline().decode().split()
         validMessage = False
         source = 'media'
@@ -105,7 +102,6 @@ while True:
         if validMessage:
             ip = message[4]
             seconds = message[0]
-            print(seconds)
-            print(ip)
+            print("Login attempt from " + ip + " at " + str(seconds))
             data = {'ip':ip, 'time':seconds, 'source':source, 'failed':failed}
             requests.post(url, json = data, verify = False)

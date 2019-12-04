@@ -239,7 +239,7 @@ def startup():
                 whitelistIP(d['ip'])
                 print("WHITELISTED BECAUSE FROM PAST")
             else: # schedule whitelisting
-                print("whitelisting scheduled for: "+d['ip'])
+                print("whitelisting scheduled for: "+d['ip']+" in "+str(time)+" seconds.")
                 events[d['ip']] = Timer(time, whitelistIP, kwargs={"ip_address":d['ip']})
                 events[d['ip']].start()
         
