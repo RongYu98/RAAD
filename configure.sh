@@ -12,4 +12,4 @@ done
 # Run Command
 echo Inserting password...
 cd backend
-python2 -c "import hash_utils; salt = hash_utils.generate_salt(); hash_utils.store_salt(salt); hash_utils.store_password(hash_utils.hmac_hash(\"$(printf "%q" $password)\", salt))"
+python3 -c "import hash_utils; salt = hash_utils.generate_salt(); hash_utils.store_salt(salt); hash_utils.store_password(hash_utils.hmac_hash(\"$(printf "%q" $password)\", salt))"
