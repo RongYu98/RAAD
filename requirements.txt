@@ -1,4 +1,4 @@
-Django==2.2.7
+Django==2.2.20
 django-sslserver==0.21
 Flask==1.1.1
 Flask-Cors==3.0.8
